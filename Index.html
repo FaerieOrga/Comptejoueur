@@ -1,0 +1,1418 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fiche Background — GN Médiéval</title>
+<link href="https://fonts.googleapis.com/css2?family=MedievalSharp&family=Cinzel:wght@400;600;700&family=IM+Fell+English:ital@0;1&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --parchment:    #f2e8c9;
+  --parchment-dk: #e0ceA0;
+  --ink:          #2a1a0a;
+  --ink-light:    #5c3d1e;
+  --red-blood:    #8b1a1a;
+  --gold:         #9a7b2f;
+  --gold-light:   #c9a84c;
+  --border:       #6b4c1e;
+  --shadow:       rgba(30,15,5,0.45);
+  --bg-img:       url('https://drive.google.com/uc?export=view&id=142vQlX6NsPL118l3x-VHn9iNx94Vydng');
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  min-height: 100vh;
+  background: #1a0f05 var(--bg-img) center/cover fixed;
+  font-family: 'Crimson Text', Georgia, serif;
+  color: var(--ink);
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background: rgba(10,5,2,0.55);
+  pointer-events: none;
+  z-index: 0;
+}
+
+#app {
+  position: relative;
+  z-index: 1;
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 20px 16px 60px;
+}
+
+.parchment {
+  background: var(--parchment) var(--bg-img) center/cover;
+  border: 3px solid var(--border);
+  border-radius: 4px;
+  padding: 36px 40px;
+  box-shadow:
+    0 0 0 1px var(--gold),
+    0 8px 32px var(--shadow),
+    inset 0 0 80px rgba(160,120,40,0.18);
+  position: relative;
+  overflow: hidden;
+}
+
+.parchment::before,
+.parchment::after {
+  content: '✦';
+  position: absolute;
+  font-size: 28px;
+  color: var(--gold);
+  opacity: 0.7;
+  line-height: 1;
+}
+.parchment::before { top: 10px; left: 14px; }
+.parchment::after  { bottom: 10px; right: 14px; }
+
+#login-screen { text-align: center; padding: 20px 0; }
+
+.login-title {
+  font-family: 'Cinzel', serif;
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--ink);
+  text-shadow: 1px 1px 0 var(--gold-light);
+  margin-bottom: 6px;
+  letter-spacing: 2px;
+}
+
+.login-subtitle {
+  font-family: 'IM Fell English', serif;
+  font-style: italic;
+  color: var(--ink-light);
+  font-size: 1.1rem;
+  margin-bottom: 30px;
+}
+
+.divider { border: none; border-top: 1px solid var(--gold); margin: 20px 0; opacity: 0.6; }
+.divider-ornament { text-align: center; color: var(--gold); font-size: 1.1rem; margin: -12px 0 20px; }
+
+.tab-switch {
+  display: flex;
+  gap: 0;
+  margin-bottom: 28px;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.tab-switch button {
+  flex: 1;
+  padding: 10px;
+  background: rgba(160,120,40,0.1);
+  border: none;
+  border-right: 1px solid var(--border);
+  font-family: 'Cinzel', serif;
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+  color: var(--ink-light);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.tab-switch button:last-child { border-right: none; }
+.tab-switch button.active { background: var(--gold); color: #fff; font-weight: 600; }
+
+.form-group { margin-bottom: 18px; text-align: left; }
+
+label {
+  display: block;
+  font-family: 'Cinzel', serif;
+  font-size: 0.78rem;
+  letter-spacing: 1.5px;
+  color: var(--ink-light);
+  margin-bottom: 5px;
+  text-transform: uppercase;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="url"],
+select,
+textarea {
+  width: 100%;
+  background: rgba(242,232,201,0.6);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  padding: 9px 12px;
+  font-family: 'Crimson Text', serif;
+  font-size: 1rem;
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+input:focus, select:focus, textarea:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 2px rgba(154,123,47,0.2);
+}
+textarea { min-height: 180px; resize: vertical; line-height: 1.7; }
+
+.btn {
+  display: inline-block;
+  padding: 10px 28px;
+  background: var(--ink);
+  color: var(--parchment);
+  border: 1px solid var(--gold);
+  border-radius: 2px;
+  font-family: 'Cinzel', serif;
+  font-size: 0.85rem;
+  letter-spacing: 2px;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: background 0.2s, color 0.2s;
+}
+.btn:hover { background: var(--gold); color: var(--ink); }
+.btn-full  { width: 100%; text-align: center; }
+.btn-sm    { padding: 6px 16px; font-size: 0.75rem; }
+.btn-danger { background: var(--red-blood); border-color: var(--red-blood); color: #fff; }
+.btn-danger:hover { background: #6b0f0f; }
+.btn-orga { background: var(--red-blood); }
+.btn-orga:hover { background: #6b0f0f; }
+
+.msg-error {
+  background: rgba(139,26,26,0.12);
+  border: 1px solid var(--red-blood);
+  color: var(--red-blood);
+  padding: 8px 14px;
+  border-radius: 2px;
+  font-size: 0.9rem;
+  margin-top: 10px;
+  display: none;
+}
+.msg-success {
+  background: rgba(47,100,47,0.12);
+  border: 1px solid #3a6b3a;
+  color: #2a4a2a;
+  padding: 8px 14px;
+  border-radius: 2px;
+  font-size: 0.9rem;
+  margin-top: 10px;
+  display: none;
+}
+
+.fiche-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--gold);
+}
+.fiche-header-left h1 {
+  font-family: 'Cinzel', serif;
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: 2px;
+}
+.fiche-header-left .nom-perso {
+  font-family: 'IM Fell English', serif;
+  font-style: italic;
+  font-size: 1.2rem;
+  color: var(--ink-light);
+}
+.fiche-header-right { display: flex; gap: 8px; align-items: center; }
+
+.badge-statut {
+  display: inline-block;
+  padding: 3px 12px;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  font-family: 'Cinzel', serif;
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+  background: rgba(154,123,47,0.15);
+  color: var(--ink-light);
+}
+
+.onglets-nav {
+  display: flex;
+  gap: 0;
+  border-bottom: 2px solid var(--gold);
+  margin-bottom: 28px;
+}
+.onglet-btn {
+  padding: 8px 20px;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  font-family: 'Cinzel', serif;
+  font-size: 0.82rem;
+  letter-spacing: 1.5px;
+  color: var(--ink-light);
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: color 0.2s, border-color 0.2s;
+}
+.onglet-btn:hover { color: var(--ink); }
+.onglet-btn.active { color: var(--red-blood); border-bottom-color: var(--red-blood); font-weight: 600; }
+
+.section-title {
+  font-family: 'IM Fell English', serif;
+  font-size: 1.5rem;
+  color: var(--ink);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.section-title::before { content: '➤'; color: var(--gold); font-size: 1rem; }
+
+.infos-bloc {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 20px;
+  margin-bottom: 28px;
+  padding: 18px;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid var(--border);
+}
+.infos-photo {
+  width: 120px; height: 150px;
+  object-fit: cover;
+  border: 2px solid var(--border);
+  box-shadow: 2px 2px 8px var(--shadow);
+}
+.infos-photo-placeholder {
+  width: 120px; height: 150px;
+  background: rgba(154,123,47,0.1);
+  border: 2px dashed var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink-light);
+  font-size: 0.8rem;
+  text-align: center;
+  padding: 8px;
+}
+.info-ligne {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 0.97rem;
+}
+.info-ligne strong {
+  font-family: 'Cinzel', serif;
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+  color: var(--ink-light);
+  text-transform: uppercase;
+  min-width: 110px;
+}
+
+.histoire-texte {
+  font-family: 'IM Fell English', serif;
+  font-size: 1.05rem;
+  line-height: 1.85;
+  color: var(--ink);
+  white-space: pre-wrap;
+  text-align: justify;
+  text-indent: 1.5em;
+}
+
+.notes-orga-bloc {
+  background: rgba(139,26,26,0.05);
+  border: 1px solid rgba(139,26,26,0.25);
+  border-radius: 2px;
+  padding: 16px 20px;
+}
+.notes-orga-texte {
+  font-family: 'IM Fell English', serif;
+  font-style: italic;
+  font-size: 1rem;
+  line-height: 1.8;
+  white-space: pre-wrap;
+}
+.notes-orga-meta {
+  font-size: 0.8rem;
+  color: var(--ink-light);
+  margin-top: 10px;
+  font-family: 'Cinzel', serif;
+  letter-spacing: 0.5px;
+}
+
+.liens-grid { display: flex; flex-direction: column; gap: 20px; }
+.lien-card {
+  display: grid;
+  grid-template-columns: 160px 1fr 110px;
+  gap: 14px;
+  border: 1px solid var(--border);
+  padding: 16px;
+  background: rgba(255,255,255,0.1);
+  transition: box-shadow 0.2s;
+}
+.lien-card:hover { box-shadow: 0 2px 12px var(--shadow); }
+.lien-photo { width: 100%; aspect-ratio: 3/4; object-fit: cover; border: 1px solid var(--border); }
+.lien-photo-ph {
+  width: 100%; aspect-ratio: 3/4;
+  background: rgba(154,123,47,0.08);
+  border: 1px dashed var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.75rem; color: var(--ink-light);
+}
+.lien-infos .lien-perso-nom {
+  font-family: 'Cinzel', serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+.lien-type {
+  display: inline-block;
+  padding: 2px 10px;
+  background: var(--red-blood);
+  color: #f2e8c9;
+  font-family: 'Cinzel', serif;
+  font-size: 0.7rem;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+.lien-notes-txt {
+  font-family: 'IM Fell English', serif;
+  font-style: italic;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  white-space: pre-wrap;
+}
+
+.orga-table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+.orga-table th {
+  font-family: 'Cinzel', serif;
+  font-size: 0.72rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--ink-light);
+  border-bottom: 2px solid var(--gold);
+  padding: 8px 10px;
+  text-align: left;
+}
+.orga-table td { padding: 8px 10px; border-bottom: 1px solid rgba(107,76,30,0.2); vertical-align: middle; }
+.orga-table tr:hover td { background: rgba(154,123,47,0.06); }
+.orga-toolbar { display: flex; gap: 10px; align-items: center; margin-bottom: 20px; flex-wrap: wrap; }
+
+.modal-overlay {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(10,5,2,0.75);
+  z-index: 100;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+.modal-overlay.open { display: flex; }
+.modal-box {
+  background: var(--parchment) var(--bg-img) center/cover;
+  border: 2px solid var(--border);
+  box-shadow: 0 0 0 1px var(--gold), 0 12px 48px rgba(0,0,0,0.6);
+  padding: 30px 34px;
+  max-width: 1100px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+}
+.modal-title { font-family: 'Cinzel', serif; font-size: 1.2rem; font-weight: 700; margin-bottom: 20px; color: var(--ink); }
+.modal-close { position: absolute; top: 12px; right: 16px; background: none; border: none; font-size: 1.4rem; color: var(--ink-light); cursor: pointer; }
+
+.toast {
+  position: fixed;
+  bottom: 24px; right: 24px;
+  background: var(--ink);
+  color: var(--parchment);
+  border: 1px solid var(--gold);
+  padding: 12px 22px;
+  font-family: 'Cinzel', serif;
+  font-size: 0.8rem;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 20px var(--shadow);
+  z-index: 200;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.3s, transform 0.3s;
+  pointer-events: none;
+}
+.toast.show { opacity: 1; transform: translateY(0); }
+
+.logout-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 10px 16px;
+  background: rgba(30,15,5,0.7);
+  border: 1px solid var(--gold);
+  color: var(--parchment);
+}
+.logout-bar span { font-family: 'Cinzel', serif; font-size: 0.78rem; letter-spacing: 1px; }
+
+@media (max-width: 600px) {
+  .modal-box { max-width: 100%; }
+  .parchment { padding: 22px 18px; }
+  .infos-bloc { grid-template-columns: 1fr; }
+  .infos-photo, .infos-photo-placeholder { width: 90px; height: 110px; }
+  .lien-card { grid-template-columns: 1fr; }
+  .onglet-btn { padding: 6px 12px; font-size: 0.72rem; }
+  .login-title { font-size: 1.6rem; }
+}
+
+/* ── Dés flottants ── */
+#des-btn-float {
+  position: fixed;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--ink);
+  color: var(--parchment);
+  border: 1px solid var(--gold);
+  border-right: none;
+  border-radius: 4px 0 0 4px;
+  padding: 12px 8px;
+  cursor: pointer;
+  font-size: 1.4rem;
+  z-index: 150;
+  writing-mode: vertical-rl;
+  letter-spacing: 2px;
+  font-family: 'Cinzel', serif;
+  font-size: 0.7rem;
+}
+#des-btn-float:hover { background: var(--gold); }
+
+#des-panel {
+  position: fixed;
+  right: -320px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 300px;
+  background: var(--parchment);
+  border: 2px solid var(--border);
+  box-shadow: 0 0 0 1px var(--gold), -4px 0 20px var(--shadow);
+  border-radius: 4px 0 0 4px;
+  padding: 20px;
+  z-index: 149;
+  transition: right 0.3s ease;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+#des-panel.open { right: 0; }
+
+.des-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin-bottom: 16px;
+}
+.des-type-btn {
+  padding: 8px 4px;
+  background: rgba(154,123,47,0.1);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  font-family: 'Cinzel', serif;
+  font-size: 0.72rem;
+  color: var(--ink);
+  cursor: pointer;
+  text-align: center;
+  transition: background 0.2s;
+}
+.des-type-btn:hover, .des-type-btn.active { background: var(--gold); color: #fff; }
+
+.des-resultat {
+  text-align: center;
+  font-family: 'Cinzel', serif;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--red-blood);
+  margin: 12px 0;
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  background: rgba(255,255,255,0.2);
+  transition: transform 0.1s;
+}
+.des-resultat.roll { animation: rollAnim 0.4s ease; }
+@keyframes rollAnim {
+  0%   { transform: scale(1.3) rotate(-10deg); opacity: 0.3; }
+  50%  { transform: scale(0.9) rotate(5deg);  opacity: 0.8; }
+  100% { transform: scale(1)   rotate(0deg);  opacity: 1; }
+}
+
+.des-historique {
+  font-family: 'Crimson Text', serif;
+  font-size: 0.88rem;
+  color: var(--ink-light);
+  border-top: 1px solid var(--gold);
+  padding-top: 10px;
+  margin-top: 10px;
+  max-height: 120px;
+  overflow-y: auto;
+}
+.des-historique div { padding: 2px 0; border-bottom: 1px solid rgba(107,76,30,0.1); }
+
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- ══ LOGIN ══ -->
+  <div id="login-screen">
+    <div class="parchment">
+      <div class="login-title">⚔ Fiche Background ⚔</div>
+      <div class="login-subtitle" id="login-subtitle-text">GN Médiéval</div>
+      <hr class="divider">
+      <div class="divider-ornament">✦ ✦ ✦</div>
+
+      <div class="tab-switch">
+        <button class="active" onclick="switchLogin('joueur', this)">Joueur·euse</button>
+        <button onclick="switchLogin('orga', this)">Organisateur</button>
+      </div>
+
+      <div id="form-joueur">
+        <div class="form-group">
+          <label>Votre adresse e-mail</label>
+          <input type="email" id="login-email" placeholder="votre@email.com">
+        </div>
+        <div class="form-group">
+          <label>Code joueur (fourni par l'orga)</label>
+          <input type="password" id="login-code" placeholder="••••••">
+        </div>
+        <button class="btn btn-full" onclick="doLoginJoueur()">Accéder à ma fiche</button>
+        <div class="msg-error" id="err-joueur">Email ou code incorrect.</div>
+      </div>
+
+      <!-- ✅ Login orga sans mot de passe — accès par lien privé ?orga=1 -->
+     <div id="form-orga" style="display:none">
+  <div class="form-group">
+    <label>Mot de passe organisateur</label>
+    <input type="password" id="login-orga-pwd" placeholder="••••••••">
+  </div>
+  <button class="btn btn-orga btn-full" onclick="doLoginOrga()">Accès organisateur</button>
+  <div class="msg-error" id="err-orga">Mot de passe incorrect.</div>
+</div>
+    </div>
+  </div>
+
+  <!-- ══ FICHE JOUEUR ══ -->
+  <div id="fiche-screen" style="display:none">
+    <div class="logout-bar">
+      <span id="logout-label">Connecté(e)</span>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-sm" id="btn-retour-orga" onclick="retourTableau()" style="display:none">← Retour</button>
+        <button class="btn btn-sm" onclick="logout()">Déconnexion</button>
+      </div>
+    </div>
+    <div class="parchment">
+      <div class="fiche-header">
+        <div class="fiche-header-left">
+          <div style="font-family:'Cinzel',serif;font-size:0.75rem;letter-spacing:1.5px;color:var(--ink-light);text-transform:uppercase;margin-bottom:2px;">Joueur·euse</div>
+          <h1 id="fiche-nom-joueur">—</h1>
+          <div class="nom-perso" id="fiche-nom-perso">—</div>
+        </div>
+        <div class="fiche-header-right">
+          <span class="badge-statut" id="fiche-statut">PJ</span>
+          <button class="btn btn-sm" id="btn-modifier" onclick="openEditFiche()">✏ Modifier BG</button>
+        </div>
+      </div>
+
+      <div class="onglets-nav">
+        <button class="onglet-btn active" onclick="showOnglet('bg', this)">Le BG</button>
+        <button class="onglet-btn" onclick="showOnglet('orga', this)">Notes Orga</button>
+        <button class="onglet-btn" onclick="showOnglet('liens', this)">Les Liens</button>
+        <button class="onglet-btn" onclick="showOnglet('jeu', this)">Jeu virtuel</button>
+      </div>
+
+      <div id="onglet-bg">
+        <div class="infos-bloc">
+          <div>
+            <div class="info-ligne"><strong>E-mail</strong> <span id="fi-email">—</span></div>
+            <div class="info-ligne"><strong>Statut</strong> <span id="fi-statut">—</span></div>
+            <div class="info-ligne"><strong>Savoir-faire</strong> <span id="fi-sf">—</span></div>
+            <div style="margin-top:16px;padding-top:14px;border-top:1px solid rgba(107,76,30,0.3);">
+              <div style="font-family:'Cinzel',serif;font-size:0.72rem;letter-spacing:1.5px;color:var(--ink-light);text-transform:uppercase;margin-bottom:8px;">Liens utiles</div>
+              <div id="fi-liens-utiles">
+                <span style="font-family:'IM Fell English',serif;font-size:0.9rem;color:var(--ink-light);font-style:italic;">Aucun lien renseigné.</span>
+              </div>
+            </div>
+          </div>
+          <div>
+            <img id="fi-photo" class="infos-photo" src="" alt="Photo personnage" style="display:none">
+            <div id="fi-photo-ph" class="infos-photo-placeholder">📷<br>Pas de photo</div>
+          </div>
+        </div>
+        <div class="section-title">L'histoire</div>
+        <div class="histoire-texte" id="fi-histoire">—</div>
+      </div>
+
+      <div id="onglet-orga" style="display:none">
+        <div class="section-title">Notes des Orga</div>
+        <div style="font-family:'IM Fell English',serif;font-style:italic;color:var(--ink-light);margin-bottom:16px;font-size:0.95rem;">
+          Ces notes sont réservées aux organisateurs. Elles peuvent contenir des consignes de jeu, un résumé de ton BG, ou des événements à vivre.
+        </div>
+        <div class="notes-orga-bloc">
+          <div class="notes-orga-texte" id="fi-notes-orga">Aucune note pour l'instant.</div>
+          <div class="notes-orga-meta" id="fi-notes-orga-meta"></div>
+        </div>
+      </div>
+
+      <div id="onglet-liens" style="display:none">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+          <div class="section-title" style="margin-bottom:0">Les Liens</div>
+          <button class="btn btn-sm" id="btn-add-lien" onclick="openAddLien()">+ Ajouter un lien</button>
+        </div>
+        <div class="liens-grid" id="fi-liens-grid">
+          <div style="font-family:'IM Fell English',serif;font-style:italic;color:var(--ink-light);">Aucun lien renseigné.</div>
+        </div>
+      </div>
+
+      <div id="onglet-jeu" style="display:none">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+          <div class="section-title" style="margin-bottom:0">Jeu virtuel</div>
+          <button class="btn btn-sm" id="btn-modifier-jeu" onclick="openEditJeu()">✏ Modifier</button>
+        </div>
+        <div class="histoire-texte" id="fi-jeu">—</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ VUE ORGA ══ -->
+  <div id="orga-screen" style="display:none">
+    <div class="logout-bar">
+      <span>⚔ Vue Organisateur</span>
+      <button class="btn btn-sm" onclick="logout()">Déconnexion</button>
+    </div>
+    <div class="parchment">
+      <div style="font-family:'Cinzel',serif;font-size:1.4rem;font-weight:700;letter-spacing:2px;margin-bottom:24px;color:var(--ink);">
+        ⚔ Gestion des Joueurs
+      </div>
+      <div class="orga-toolbar">
+        <button class="btn btn-sm" onclick="openAddJoueur()">+ Nouveau joueur</button>
+        <button class="btn btn-sm" onclick="initSheetOrga()">Initialiser le Sheet</button>
+        <input type="text" id="orga-search" placeholder="Filtrer…" style="max-width:200px;margin-left:auto" oninput="filterJoueurs(this.value)">
+      </div>
+      <table class="orga-table">
+        <thead>
+          <tr>
+            <th>Nom joueur</th><th>Personnage</th><th>Email</th><th>Statut</th><th>Modifié le</th><th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="orga-joueurs-body">
+          <tr><td colspan="6" style="text-align:center;padding:20px;font-style:italic;color:var(--ink-light);">Chargement…</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══ MODALES ══ -->
+
+<!-- Modifier fiche joueur -->
+<div class="modal-overlay" id="modal-edit">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('modal-edit')">✕</button>
+    <div class="modal-title" id="modal-title-edit">✏ Modifier la fiche</div>
+    <div id="modal-edit-grid" style="display:grid;grid-template-columns:2fr 1fr;gap:24px;align-items:start">
+      <!-- Colonne gauche : Histoire -->
+      <div>
+        <div class="form-group">
+          <label>Nom du personnage</label>
+          <input type="text" id="e-nom-perso">
+        </div>
+        <div class="form-group">
+          <label>L'histoire</label>
+          <textarea id="e-histoire" style="min-height:420px;resize:vertical"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Jeu virtuel</label>
+          <textarea id="e-jeu" style="min-height:200px;resize:vertical"></textarea>
+        </div>
+      </div>
+      <!-- Colonne droite : Infos -->
+      <div>
+        <div id="row-nom-joueur" class="form-group"><label>Nom joueur·euse</label><input type="text" id="e-nom-joueur"></div>
+        <div id="row-prenom" class="form-group"><label>Prénom</label><input type="text" id="e-prenom-joueur"></div>
+        <div id="row-statut" class="form-group">
+          <label>Statut</label>
+          <select id="e-statut">
+            <option value="PJ">PJ — Personnage Joueur</option>
+            <option value="PNJ fixe">PNJ fixe</option>
+            <option value="PNJ volant">PNJ volant</option>
+            <option value="PNJ prestataire">PNJ prestataire</option>
+          </select>
+        </div>
+        <div id="row-sf" class="form-group"><label>URL Savoir-faire</label><input type="url" id="e-sf" placeholder="https://docs.google.com/…"></div>
+        <div id="row-photo" class="form-group"><label>URL photo</label><input type="url" id="e-photo" placeholder="https://drive.google.com/thumbnail?id=…&sz=w400"></div>
+        <div id="row-liens-utiles" class="form-group">
+          <label>Liens utiles (jusqu'à 3)</label>
+          <div style="display:grid;grid-template-columns:1fr 2fr;gap:6px;margin-bottom:6px">
+            <input type="text" id="lu-label-1" placeholder="Label">
+            <input type="url"  id="lu-url-1"   placeholder="https://…">
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 2fr;gap:6px;margin-bottom:6px">
+            <input type="text" id="lu-label-2" placeholder="Label">
+            <input type="url"  id="lu-url-2"   placeholder="https://…">
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 2fr;gap:6px">
+            <input type="text" id="lu-label-3" placeholder="Label">
+            <input type="url"  id="lu-url-3"   placeholder="https://…">
+          </div>
+        </div>
+      </div>
+    </div>
+    <button class="btn btn-full" style="margin-top:20px" onclick="saveFicheJoueur()">Sauvegarder</button>
+    <div class="msg-error" id="err-edit"></div>
+    <div class="msg-success" id="ok-edit"></div>
+  </div>
+</div>
+
+<!-- Ajouter/modifier un lien -->
+<div class="modal-overlay" id="modal-lien">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('modal-lien')">✕</button>
+    <div class="modal-title" id="modal-lien-title">Nouveau lien</div>
+    <div class="form-group"><label>Nom du personnage lié</label><input type="text" id="l-nom-perso"></div>
+    <div class="form-group"><label>Nom du joueur·euse</label><input type="text" id="l-nom-joueur"></div>
+    <div class="form-group"><label>Savoir-faire</label><input type="text" id="l-sf"></div>
+    <div class="form-group">
+      <label>Statut</label>
+      <select id="l-statut">
+        <option value="PJ">PJ</option>
+        <option value="PNJ fixe">PNJ fixe</option>
+        <option value="PNJ volant">PNJ volant</option>
+        <option value="PNJ prestataire">PNJ prestataire</option>
+      </select>
+    </div>
+    <div class="form-group"><label>Âge (approximatif)</label><input type="text" id="l-age" placeholder="ex: 25 ans, ???"></div>
+    <div class="form-group"><label>Type de lien</label><input type="text" id="l-type" placeholder="ex: Méfiance, Rivalité, Alliance…"></div>
+    <div class="form-group"><label>Notes sur la relation</label><textarea id="l-notes" style="min-height:120px"></textarea></div>
+    <div class="form-group"><label>URL photo</label><input type="url" id="l-photo" placeholder="https://…"></div>
+    <button class="btn btn-full" onclick="saveLienJoueur()">Sauvegarder ce lien</button>
+    <div class="msg-error" id="err-lien"></div>
+  </div>
+</div>
+
+<!-- Ajouter joueur (orga) -->
+<div class="modal-overlay" id="modal-add-joueur">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('modal-add-joueur')">✕</button>
+    <div class="modal-title">+ Nouveau joueur</div>
+    <div class="form-group"><label>E-mail du joueur</label><input type="email" id="aj-email"></div>
+    <div class="form-group">
+      <label>Code d'accès (à communiquer au joueur)</label>
+      <div style="display:flex;gap:8px">
+        <input type="text" id="aj-code" placeholder="ex: GN2024X">
+        <button class="btn btn-sm" onclick="genCode()" style="white-space:nowrap">Générer</button>
+      </div>
+    </div>
+    <div class="form-group"><label>Nom</label><input type="text" id="aj-nom"></div>
+    <div class="form-group"><label>Prénom</label><input type="text" id="aj-prenom"></div>
+    <!-- ✅ Select statut dans nouveau joueur -->
+    <div class="form-group">
+      <label>Statut</label>
+      <select id="aj-statut">
+        <option value="PJ">PJ — Personnage Joueur</option>
+        <option value="PNJ fixe">PNJ fixe</option>
+        <option value="PNJ volant">PNJ volant</option>
+        <option value="PNJ prestataire">PNJ prestataire</option>
+      </select>
+    </div>
+    <button class="btn btn-full" onclick="doAddJoueur()">Créer le joueur</button>
+    <div class="msg-error" id="err-aj"></div>
+    <div class="msg-success" id="ok-aj"></div>
+  </div>
+</div>
+
+<!-- Notes orga -->
+<div class="modal-overlay" id="modal-notes-orga">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('modal-notes-orga')">✕</button>
+    <div class="modal-title" id="modal-notes-title">Notes orga</div>
+    <div class="form-group">
+      <label>Notes (résumé BG, consignes, événements…)</label>
+      <textarea id="no-notes" style="min-height:260px"></textarea>
+    </div>
+    <button class="btn btn-full" onclick="doSaveNotesOrga()">Sauvegarder</button>
+    <div class="msg-success" id="ok-no"></div>
+  </div>
+</div>
+
+<!-- ── DÉS FLOTTANTS ── -->
+<button id="des-btn-float" onclick="toggleDesPanel()">🎲 Dés</button>
+<div id="des-panel">
+  <div style="font-family:'Cinzel',serif;font-size:0.9rem;font-weight:700;margin-bottom:12px;color:var(--ink);">🎲 Lancer les dés</div>
+
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+    <label style="font-size:0.72rem;min-width:60px">Nb de dés</label>
+    <input type="number" id="des-nb" value="1" min="1" max="10"
+           style="width:60px;padding:4px 8px;font-size:0.9rem">
+  </div>
+
+  <div class="des-grid">
+    <button class="des-type-btn active" onclick="selectDe(this,4)">D4</button>
+    <button class="des-type-btn" onclick="selectDe(this,6)">D6</button>
+    <button class="des-type-btn" onclick="selectDe(this,8)">D8</button>
+    <button class="des-type-btn" onclick="selectDe(this,10)">D10</button>
+    <button class="des-type-btn" onclick="selectDe(this,12)">D12</button>
+    <button class="des-type-btn" onclick="selectDe(this,20)">D20</button>
+    <button class="des-type-btn" onclick="selectDe(this,100)">D100</button>
+  </div>
+
+  <div class="des-resultat" id="des-resultat">—</div>
+
+  <button class="btn btn-full" onclick="lancerDes()" style="margin-bottom:12px">⚔ Lancer</button>
+
+  <div class="des-historique" id="des-historique">
+    <div style="font-family:'Cinzel',serif;font-size:0.7rem;color:var(--ink-light);margin-bottom:4px;">Historique</div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-jeu">
+  <div class="modal-box" style="max-width:1100px">
+    <button class="modal-close" onclick="closeModal('modal-jeu')">✕</button>
+    <div class="modal-title">✏ Jeu virtuel</div>
+    <div class="form-group">
+      <textarea id="e-jeu-modal" style="min-height:400px;resize:vertical"></textarea>
+    </div>
+    <button class="btn btn-full" onclick="saveJeu()">Sauvegarder</button>
+    <div class="msg-error" id="err-jeu"></div>
+    <div class="msg-success" id="ok-jeu"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let state = {
+  role: null,
+  email: null,
+  fiche: null,
+  liens: [],
+  editLienIndex: -1,
+  allJoueurs: [],
+  currentOrgaEmail: null
+};
+
+// ── Démarrage : restaurer session + charger config ──────────
+window.addEventListener('load', () => {
+  // Charger nom asso
+  gs('getConfig').then(cfg => {
+    if (cfg && cfg.nomAsso) {
+      document.getElementById('login-subtitle-text').textContent = cfg.nomAsso;
+    }
+  }).catch(() => {});
+
+  // Restaurer session orga si elle existe
+  const savedRole  = sessionStorage.getItem('role');
+  const savedEmail = sessionStorage.getItem('email');
+  if (savedRole === 'orga') {
+    state.role = 'orga';
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('orga-screen').style.display  = '';
+    loadAllJoueurs();
+  } else if (savedRole === 'joueur' && savedEmail) {
+    state.role  = 'joueur';
+    state.email = savedEmail;
+    document.getElementById('login-screen').style.display = 'none';
+    loadFicheJoueur();
+  }
+});
+
+function gs(fn, ...args) {
+  return new Promise((res, rej) => {
+    google.script.run
+      .withSuccessHandler(res)
+      .withFailureHandler(rej)
+      [fn](...args);
+  });
+}
+
+function showToast(msg, duration = 2800) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), duration);
+}
+
+function showMsg(id, txt, type = 'error') {
+  const el = document.getElementById(id);
+  el.textContent = txt;
+  el.style.display = 'block';
+  el.className = type === 'success' ? 'msg-success' : 'msg-error';
+  setTimeout(() => { el.style.display = 'none'; }, 4000);
+}
+
+function openModal(id)  { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+function switchLogin(type, btn) {
+  document.querySelectorAll('.tab-switch button').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('form-joueur').style.display = type === 'joueur' ? '' : 'none';
+  document.getElementById('form-orga').style.display   = type === 'orga'   ? '' : 'none';
+}
+
+async function doLoginJoueur() {
+  const email = document.getElementById('login-email').value.trim();
+  const code  = document.getElementById('login-code').value.trim();
+  if (!email || !code) { showMsg('err-joueur', 'Remplis les deux champs.'); return; }
+  try {
+    const r = await gs('loginJoueur', email, code);
+    if (r.ok) {
+      state.role = 'joueur'; state.email = r.email;
+      sessionStorage.setItem('role', 'joueur');   // ✅ sauvegarder session
+      sessionStorage.setItem('email', r.email);
+      await loadFicheJoueur();
+    } else {
+      showMsg('err-joueur', 'Email ou code incorrect.');
+    }
+  } catch(e) { showMsg('err-joueur', 'Erreur : ' + e.message); }
+}
+
+// Mot de passe orga vérifié côté serveur (stocké dans Config du Sheet)
+async function doLoginOrga() {
+  const pwd = document.getElementById('login-orga-pwd').value.trim();
+  if (!pwd) { showMsg('err-orga', 'Saisis le mot de passe.'); return; }
+  try {
+    const r = await gs('loginOrga', pwd);
+    if (r.ok) {
+      state.role = 'orga';
+      sessionStorage.setItem('role', 'orga'); // ✅ sauvegarder session
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('orga-screen').style.display  = '';
+      await loadAllJoueurs();
+    } else {
+      showMsg('err-orga', 'Mot de passe incorrect.');
+    }
+  } catch(e) { showMsg('err-orga', 'Erreur : ' + e.message); }
+}
+
+function logout() {
+  sessionStorage.clear(); // ✅ vider session
+  state = { role: null, email: null, fiche: null, liens: [], editLienIndex: -1, allJoueurs: [], currentOrgaEmail: null };
+  document.getElementById('login-screen').style.display = '';
+  document.getElementById('fiche-screen').style.display = 'none';
+  document.getElementById('orga-screen').style.display  = 'none';
+  document.getElementById('login-email').value = '';
+  document.getElementById('login-code').value  = '';
+  document.getElementById('btn-modifier').style.display = '';
+  document.getElementById('btn-add-lien').style.display = '';
+  document.getElementById('btn-retour-orga').style.display = 'none';
+}
+
+async function loadFicheJoueur() {
+  const result = await gs('getFiche', state.email);
+  const fiche  = result && result.fiche ? result.fiche : null;
+  if (!fiche) { showMsg('err-joueur', 'Fiche introuvable.'); return; }
+  state.fiche = fiche;
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('fiche-screen').style.display = '';
+  document.getElementById('logout-label').textContent =
+    `${fiche.prenomJoueur} ${fiche.nomJoueur} — ${fiche.nomPersonnage}`;
+
+  // En vue orga-view : cacher les boutons de modification
+  const isView = state.role === 'orga-view';
+  document.getElementById('btn-modifier').style.display     = isView ? 'none' : '';
+  document.getElementById('btn-add-lien').style.display     = isView ? 'none' : '';
+  const btnJeu = document.getElementById('btn-modifier-jeu');
+  if (btnJeu) btnJeu.style.display = isView ? 'none' : '';
+
+  renderFiche(fiche);
+  const notes = await gs('getNotesOrga', state.email);
+  renderNotesOrga(notes);
+  const liensResult = await gs('getLiens', state.email);
+  state.liens = liensResult && liensResult.liens ? liensResult.liens : [];
+  renderLiens(state.liens);
+}
+
+function parseLiensUtiles(raw) {
+  if (!raw) return [];
+  return raw.split(',').map(s => s.trim()).filter(s => s.includes('|')).map(s => {
+    const idx = s.indexOf('|');
+    return { label: s.slice(0, idx).trim(), url: s.slice(idx+1).trim() };
+  }).filter(l => l.label && l.url);
+}
+
+function serializeLiensUtiles(pairs) {
+  return pairs.filter(p => p.label && p.url).map(p => p.label + '|' + p.url).join(',');
+}
+
+function renderFiche(f) {
+  document.getElementById('fiche-nom-joueur').textContent = `${f.prenomJoueur} ${f.nomJoueur}`;
+  document.getElementById('fiche-nom-perso').textContent  = f.nomPersonnage || '(sans nom)';
+  document.getElementById('fiche-statut').textContent     = f.statutPerso || 'PJ';
+  document.getElementById('fi-email').textContent         = f.email;
+  document.getElementById('fi-statut').textContent        = f.statutPerso || 'PJ';
+  const sfEl = document.getElementById('fi-sf');
+  if (f.savoirFaire) {
+    sfEl.innerHTML = `<a href="${f.savoirFaire}" target="_blank" rel="noopener" style="color:var(--red-blood);text-decoration:underline;text-underline-offset:3px;word-break:break-all;">📖 Livret de savoir-faire</a>`;
+  } else { sfEl.textContent = '—'; }
+  const luEl = document.getElementById('fi-liens-utiles');
+  if (luEl) {
+    const liensU = parseLiensUtiles(f.liensUtiles || '');
+    if (liensU.length > 0) {
+      luEl.innerHTML = liensU.map(l =>
+        `<a href="${l.url}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;padding:4px 12px;background:rgba(154,123,47,0.12);border:1px solid var(--border);border-radius:2px;font-family:'Cinzel',serif;font-size:0.75rem;color:var(--ink);text-decoration:none;margin-bottom:4px;">📜 ${l.label}</a>`
+      ).join('');
+    } else {
+      luEl.innerHTML = `<span style="font-family:'IM Fell English',serif;font-size:0.9rem;color:var(--ink-light);font-style:italic;">Aucun lien renseigné.</span>`;
+    }
+  }
+  document.getElementById('fi-histoire').textContent = f.histoire || "Aucune histoire renseignée pour l'instant…";
+  document.getElementById('fi-jeu').textContent = f.jeu || '—';
+  const photo = document.getElementById('fi-photo');
+  const ph    = document.getElementById('fi-photo-ph');
+  if (f.photoUrl) { photo.src = f.photoUrl; photo.style.display = ''; ph.style.display = 'none'; }
+  else { photo.style.display = 'none'; ph.style.display = ''; }
+}
+
+function renderNotesOrga(n) {
+  document.getElementById('fi-notes-orga').textContent =
+    n.notes || "Aucune note pour l'instant.";
+  document.getElementById('fi-notes-orga-meta').textContent =
+    n.nomOrga ? `Votre orga : ${n.nomOrga}${n.dateModif ? ' · Mis à jour le ' + n.dateModif : ''}` : '';
+}
+
+function renderLiens(liens) {
+  const grid = document.getElementById('fi-liens-grid');
+  const canEdit = state.role !== 'orga-view';
+  if (!liens || liens.length === 0) {
+    grid.innerHTML = "<div style=\"font-family:'IM Fell English',serif;font-style:italic;color:var(--ink-light);\">Aucun lien renseigné.</div>";
+    return;
+  }
+  grid.innerHTML = liens.map((l, i) => `
+    <div class="lien-card">
+      <div>
+        ${l.photoLienUrl
+          ? `<img src="${l.photoLienUrl}" class="lien-photo" alt="${l.nomPersoLie}">`
+          : `<div class="lien-photo-ph">📷</div>`}
+      </div>
+      <div class="lien-infos">
+        <div class="lien-perso-nom">${l.nomPersoLie || '—'}</div>
+        ${l.typeLien ? `<span class="lien-type">${l.typeLien}</span>` : ''}
+        <div class="info-ligne" style="margin-top:6px"><strong>Joueur</strong> ${l.nomJoueurLie || '—'}</div>
+        <div class="info-ligne"><strong>Savoir-faire</strong> ${l.savoirFaireLie || '—'}</div>
+        <div class="info-ligne"><strong>Statut</strong> ${l.statutLie || '—'}</div>
+        <div class="info-ligne"><strong>Âge</strong> ${l.ageLie || '???'}</div>
+        ${l.notesLien ? `<div class="lien-notes-txt" style="margin-top:10px">${l.notesLien}</div>` : ''}
+      </div>
+      ${canEdit ? `
+      <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">
+        <button class="btn btn-sm" onclick="openEditLien(${i})">✏</button>
+        <button class="btn btn-sm btn-danger" onclick="doDeleteLien(${i})">✕</button>
+      </div>` : ''}
+    </div>
+  `).join('');
+}
+
+function showOnglet(id, btn) {
+  ['bg', 'orga', 'liens', 'jeu'].forEach(o => {
+    document.getElementById('onglet-' + o).style.display = o === id ? '' : 'none';
+  });
+  document.querySelectorAll('.onglet-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function openEditFiche() {
+  const f = state.fiche;
+  const isOrga = (state.role === 'orga' || state.role === 'orga-view');
+
+  // Champs toujours visibles
+  document.getElementById('e-nom-perso').value     = f.nomPersonnage || '';
+  document.getElementById('e-histoire').value      = f.histoire || '';
+  document.getElementById('e-jeu').value = f.jeu || '';
+
+  // Champs orga uniquement
+  document.getElementById('e-nom-joueur').value    = f.nomJoueur || '';
+  document.getElementById('e-prenom-joueur').value = f.prenomJoueur || '';
+  document.getElementById('e-statut').value        = f.statutPerso || 'PJ';
+  document.getElementById('e-sf').value            = f.savoirFaire || '';
+  document.getElementById('e-photo').value         = f.photoUrl || '';
+  const liensU = parseLiensUtiles(f.liensUtiles || '');
+  for (let i = 1; i <= 3; i++) {
+    const l = liensU[i-1] || { label: '', url: '' };
+    document.getElementById('lu-label-' + i).value = l.label;
+    document.getElementById('lu-url-'   + i).value = l.url;
+  }
+
+  // Afficher/masquer les champs orga
+  const display = isOrga ? '' : 'none';
+  ['row-nom-joueur','row-prenom','row-statut','row-sf','row-photo','row-liens-utiles'].forEach(id => {
+    document.getElementById(id).style.display = display;
+  });
+  document.getElementById('modal-edit-grid').style.gridTemplateColumns = isOrga ? '2fr 1fr' : '1fr';
+
+  document.getElementById('modal-title-edit').textContent = isOrga ? '✏ Modifier la fiche' : '✏ Mon personnage';
+  openModal('modal-edit');
+}
+
+async function saveFicheJoueur() {
+  const isOrga = (state.role === 'orga' || state.role === 'orga-view');
+  const pairs = [];
+  for (let i = 1; i <= 3; i++) {
+    pairs.push({
+      label: document.getElementById('lu-label-' + i).value.trim(),
+      url:   document.getElementById('lu-url-'   + i).value.trim()
+    });
+  }
+  const data = {
+    email:         state.email,
+    nomPersonnage: document.getElementById('e-nom-perso').value.trim(),
+    histoire:      document.getElementById('e-histoire').value,
+    jeu:           document.getElementById('e-jeu').value,
+    // Champs orga : on garde les valeurs existantes si joueur
+    nomJoueur:     isOrga ? document.getElementById('e-nom-joueur').value.trim()    : state.fiche.nomJoueur,
+    prenomJoueur:  isOrga ? document.getElementById('e-prenom-joueur').value.trim() : state.fiche.prenomJoueur,
+    statutPerso:   isOrga ? document.getElementById('e-statut').value               : state.fiche.statutPerso,
+    savoirFaire:   isOrga ? document.getElementById('e-sf').value.trim()            : state.fiche.savoirFaire,
+    photoUrl:      isOrga ? document.getElementById('e-photo').value.trim()         : state.fiche.photoUrl,
+    liensUtiles:   isOrga ? serializeLiensUtiles(pairs)                             : state.fiche.liensUtiles || ''
+  };
+  try {
+    const r = await gs('saveFiche', data);
+    if (r.ok) {
+      state.fiche = { ...state.fiche, ...data };
+      renderFiche(state.fiche);
+      closeModal('modal-edit');
+      showToast('✦ Fiche sauvegardée avec succès');
+    } else {
+      showMsg('err-edit', r.msg || 'Erreur lors de la sauvegarde.');
+    }
+  } catch(e) { showMsg('err-edit', 'Erreur : ' + e.message); }
+}
+
+function openAddLien() {
+  state.editLienIndex = -1;
+  document.getElementById('modal-lien-title').textContent = '+ Nouveau lien';
+  ['l-nom-perso', 'l-nom-joueur', 'l-sf', 'l-age', 'l-type', 'l-notes', 'l-photo'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  document.getElementById('l-statut').value = 'PJ';
+  openModal('modal-lien');
+}
+
+function openEditLien(i) {
+  state.editLienIndex = i;
+  const l = state.liens[i];
+  document.getElementById('modal-lien-title').textContent = '✏ Modifier le lien';
+  document.getElementById('l-nom-perso').value  = l.nomPersoLie || '';
+  document.getElementById('l-nom-joueur').value = l.nomJoueurLie || '';
+  document.getElementById('l-sf').value         = l.savoirFaireLie || '';
+  document.getElementById('l-statut').value     = l.statutLie || 'PJ';
+  document.getElementById('l-age').value        = l.ageLie || '';
+  document.getElementById('l-type').value       = l.typeLien || '';
+  document.getElementById('l-notes').value      = l.notesLien || '';
+  document.getElementById('l-photo').value      = l.photoLienUrl || '';
+  openModal('modal-lien');
+}
+
+async function saveLienJoueur() {
+  const lien = {
+    nomPersoLie:    document.getElementById('l-nom-perso').value.trim(),
+    nomJoueurLie:   document.getElementById('l-nom-joueur').value.trim(),
+    savoirFaireLie: document.getElementById('l-sf').value.trim(),
+    statutLie:      document.getElementById('l-statut').value,
+    ageLie:         document.getElementById('l-age').value.trim(),
+    typeLien:       document.getElementById('l-type').value.trim(),
+    notesLien:      document.getElementById('l-notes').value,
+    photoLienUrl:   document.getElementById('l-photo').value.trim()
+  };
+  try {
+    await gs('saveLien', state.email, lien, state.editLienIndex);
+    if (state.editLienIndex >= 0) { state.liens[state.editLienIndex] = lien; }
+    else { state.liens.push(lien); }
+    renderLiens(state.liens);
+    closeModal('modal-lien');
+    showToast('✦ Lien sauvegardé');
+  } catch(e) { showMsg('err-lien', 'Erreur : ' + e.message); }
+}
+
+async function doDeleteLien(i) {
+  if (!confirm('Supprimer ce lien ?')) return;
+  try {
+    await gs('deleteLien', state.email, i);
+    state.liens.splice(i, 1);
+    renderLiens(state.liens);
+    showToast('✦ Lien supprimé');
+  } catch(e) { showToast('Erreur : ' + e.message); }
+}
+
+// ✅ Retour au tableau orga depuis une fiche
+function retourTableau() {
+  state.role = 'orga';
+  document.getElementById('fiche-screen').style.display = 'none';
+  document.getElementById('orga-screen').style.display  = '';
+  document.getElementById('btn-retour-orga').style.display = 'none';
+  renderTableJoueurs(state.allJoueurs);
+}
+
+async function loadAllJoueurs() {
+  try {
+    const result = await gs('getAllJoueurs');
+    const list   = result && result.joueurs ? result.joueurs : [];
+    state.allJoueurs = list;
+    renderTableJoueurs(list);
+  } catch(e) { showToast('ERREUR : ' + e.message); }
+}
+
+function renderTableJoueurs(list) {
+  const tbody = document.getElementById('orga-joueurs-body');
+  if (!list || list.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;font-style:italic;color:var(--ink-light);">Aucun joueur.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = list.map(j => `
+    <tr>
+      <td>${j.prenomJoueur} ${j.nomJoueur}</td>
+      <td>${j.nomPersonnage || '—'}</td>
+      <td>${j.email}</td>
+      <td><span class="badge-statut">${j.statutPerso || '—'}</span></td>
+      <td style="font-size:0.8rem;color:var(--ink-light)">${j.dateModif || '—'}</td>
+      <td style="display:flex;gap:6px">
+        <button class="btn btn-sm" onclick="orgaViewFiche('${j.email}')">Voir fiche</button>
+        <button class="btn btn-sm btn-orga" onclick="orgaEditNotes('${j.email}','${j.nomPersonnage}')">Notes</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function filterJoueurs(q) {
+  const filtered = state.allJoueurs.filter(j =>
+    `${j.nomJoueur} ${j.prenomJoueur} ${j.nomPersonnage} ${j.email}`.toLowerCase().includes(q.toLowerCase())
+  );
+  renderTableJoueurs(filtered);
+}
+
+async function orgaViewFiche(email) {
+  const result = await gs('getFiche', email);
+  const fiche  = result && result.fiche ? result.fiche : null;
+  if (!fiche) { showToast('Fiche introuvable'); return; }
+  state.email = email; state.fiche = fiche; state.role = 'orga-view';
+  document.getElementById('orga-screen').style.display  = 'none';
+  document.getElementById('fiche-screen').style.display = '';
+  document.getElementById('logout-label').textContent   = `Vue orga — ${fiche.prenomJoueur} ${fiche.nomJoueur}`;
+  document.getElementById('btn-retour-orga').style.display = ''; // ✅ bouton retour
+  renderFiche(fiche);
+  const notes = await gs('getNotesOrga', email);
+  renderNotesOrga(notes);
+  const liensResult = await gs('getLiens', email);
+  state.liens = liensResult && liensResult.liens ? liensResult.liens : [];
+  renderLiens(state.liens);
+  showOnglet('bg', document.querySelector('.onglet-btn'));
+}
+
+async function orgaEditNotes(email, nomPerso) {
+  state.currentOrgaEmail = email;
+  document.getElementById('modal-notes-title').textContent = `Notes orga — ${nomPerso}`;
+  const notes = await gs('getNotesOrga', email);
+  document.getElementById('no-notes').value = notes.notes || '';
+  openModal('modal-notes-orga');
+}
+
+async function doSaveNotesOrga() {
+  const notes = document.getElementById('no-notes').value;
+  try {
+    await gs('saveNotesOrga', state.currentOrgaEmail, notes);
+    showMsg('ok-no', '✦ Notes sauvegardées !', 'success');
+    showToast('✦ Notes sauvegardées');
+  } catch(e) { showToast('Erreur : ' + e.message); }
+}
+
+function openAddJoueur() { openModal('modal-add-joueur'); }
+
+function genCode() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let code = '';
+  for (let i = 0; i < 6; i++) code += chars[Math.floor(Math.random() * chars.length)];
+  document.getElementById('aj-code').value = code;
+}
+
+async function doAddJoueur() {
+  const email  = document.getElementById('aj-email').value.trim();
+  const code   = document.getElementById('aj-code').value.trim();
+  const nom    = document.getElementById('aj-nom').value.trim();
+  const prenom = document.getElementById('aj-prenom').value.trim();
+  const statut = document.getElementById('aj-statut').value; // ✅ récupéré ici
+  if (!email || !code) { showMsg('err-aj', 'Email et code obligatoires.'); return; }
+  try {
+    await gs('addJoueur', email, code, nom, prenom, statut);
+    showMsg('ok-aj', `✦ Joueur créé ! Code : ${code}`, 'success');
+    await loadAllJoueurs();
+  } catch(e) { showMsg('err-aj', 'Erreur : ' + e.message); }
+}
+
+async function initSheetOrga() {
+  try {
+    const r = await gs('initSheet');
+    showToast('✦ ' + r);
+  } catch(e) { showToast('Erreur : ' + e.message); }
+}
+
+// ── Dés flottants ────────────────────────────────────────────
+let deActif = 4;
+
+function toggleDesPanel() {
+  document.getElementById('des-panel').classList.toggle('open');
+}
+
+function selectDe(btn, val) {
+  document.querySelectorAll('.des-type-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  deActif = val;
+}
+
+function lancerDes() {
+  const nb = parseInt(document.getElementById('des-nb').value) || 1;
+  const resultats = [];
+  for (let i = 0; i < nb; i++) {
+    resultats.push(Math.floor(Math.random() * deActif) + 1);
+  }
+  const total = resultats.reduce((a, b) => a + b, 0);
+  const el = document.getElementById('des-resultat');
+  el.classList.remove('roll');
+  void el.offsetWidth; // reset animation
+  el.classList.add('roll');
+  el.textContent = nb > 1 ? `${total} (${resultats.join('+')})` : total;
+
+  // Historique
+  const hist = document.getElementById('des-historique');
+  const ligne = document.createElement('div');
+  ligne.textContent = `${nb}D${deActif} → ${el.textContent}`;
+  hist.insertBefore(ligne, hist.children[1]);
+  if (hist.children.length > 11) hist.removeChild(hist.lastChild);
+}
+
+function openEditJeu() {
+  document.getElementById('e-jeu-modal').value = state.fiche.jeu || '';
+  openModal('modal-jeu');
+}
+
+async function saveJeu() {
+  const data = {
+    ...state.fiche,
+    jeu: document.getElementById('e-jeu-modal').value
+  };
+  try {
+    const r = await gs('saveFiche', data);
+    if (r.ok) {
+      state.fiche.jeu = data.jeu;
+      document.getElementById('fi-jeu').textContent = data.jeu || '—';
+      closeModal('modal-jeu');
+      showToast('✦ Jeu virtuel sauvegardé');
+    } else {
+      showMsg('err-jeu', r.msg || 'Erreur.');
+    }
+  } catch(e) { showMsg('err-jeu', 'Erreur : ' + e.message); }
+}
+
+</script>
+</body>
+</html>
