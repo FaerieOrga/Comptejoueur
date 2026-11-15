@@ -4,8 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Chroniques de Faërie — Espace Joueur</title>
-<link rel="icon" href="https://raw.g
-  ithubusercontent.com/FaerieOrga/images-forum/main/logo32%20copie.jpg" />
+<link rel="icon" href="https://raw.githubusercontent.com/FaerieOrga/images-forum/main/logo32%20copie.jpg" />
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=IM+Fell+English:ital@0;1&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -763,7 +762,10 @@ textarea { min-height: 180px; resize: vertical; line-height: 1.7; }
           <div class="dashboard-title" id="dashboard-titre">Mes Personnages</div>
           <div class="dashboard-subtitle" id="dashboard-sous-titre" style="margin-bottom:0">Choisissez un personnage pour accéder à sa fiche</div>
         </div>
-        <button class="btn btn-sm" id="btn-dashboard-add-perso" onclick="openAddPersoOrga(state.email)" style="display:none">+ Nouveau personnage</button>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-sm" id="btn-joueur-add-perso" onclick="creerPersoJoueur()">+ Nouveau personnage</button>
+          <button class="btn btn-sm" id="btn-dashboard-add-perso" onclick="openAddPersoOrga(state.email)" style="display:none">+ Nouveau personnage (Orga)</button>
+        </div>
       </div>
       <div class="persos-grid" id="persos-grid">
         <div style="font-family:'IM Fell English',serif;font-style:italic;color:var(--ink-light);padding:20px 0;">Chargement…</div>
@@ -904,7 +906,7 @@ textarea { min-height: 180px; resize: vertical; line-height: 1.7; }
         <button class="btn btn-sm" onclick="openAddJoueur()">+ Nouveau joueur</button>
         <button class="btn btn-sm" onclick="openAddPersoOrga()">+ Nouveau personnage</button>
         <button class="btn btn-sm" id="btn-init-sheet" onclick="initSheetOrga()">Initialiser le Sheet</button>
-        <button class="btn btn-sm" id="btn-init-sheet" onclick="initSheetOrga()">Initialiser le Sheet</button>
+        <button class="btn btn-sm btn-orga" onclick="openModal('modal-orgas'); loadAllOrgas()">⚔ Gérer les orgas</button>
         <input type="text" id="orga-search" placeholder="Filtrer…" style="max-width:200px;margin-left:auto" oninput="filterJoueurs(this.value)">
       </div>
       <table class="orga-table">
@@ -1123,7 +1125,7 @@ textarea { min-height: 180px; resize: vertical; line-height: 1.7; }
     </table>
   </div>
 </div>
-  
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -1143,8 +1145,8 @@ const state = {
   editLienIndex:    -1,
   allJoueurs:       [],
   cache: {
-    persosByEmail: {}, // email -> array de persos
-    fiches: {}         // idPerso -> { perso, notesOrga, liens, chroniques }
+    persosByEmail: {},
+    fiches: {}
   }
 };
 
@@ -1280,19 +1282,21 @@ async function doLoginOrga() {
   if (!pwd) { showMsg('err-orga', 'Renseignez le mot de passe.'); return; }
   hideMsg('err-orga');
 
-  const r = email ? await gs('loginOrga', email, pwd) : await gs('loginOrga', pwd);
-  if (r && r.ok) {
-    state.role         = 'orga';
-    state.email        = r.email || 'orga';
-    state.nomJoueur    = r.nomOrga || 'Orga';
-    state.prenomJoueur = r.prenomOrga || '';
-    document.getElementById('login-screen').style.display = 'none';
-    document.getElementById('orga-screen').style.display  = '';
-    pushNavState('orga');
-    await loadAllJoueurs();
-  } else {
-    showMsg('err-orga', 'Identifiants organisateur incorrects.');
-  }
+  await withBtnLoading('btn-login-orga', 'Connexion…', async () => {
+    const r = email ? await gs('loginOrga', email, pwd) : await gs('loginOrga', pwd);
+    if (r && r.ok) {
+      state.role         = 'orga';
+      state.email        = r.email || 'orga';
+      state.nomJoueur    = r.nomOrga || 'Orga';
+      state.prenomJoueur = r.prenomOrga || '';
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('orga-screen').style.display  = '';
+      pushNavState('orga');
+      await loadAllJoueurs();
+    } else {
+      showMsg('err-orga', 'Identifiants organisateur incorrects.');
+    }
+  });
 }
 
 async function loadAllOrgas() {
@@ -1340,6 +1344,7 @@ async function loadDashboard() {
   document.getElementById('fiche-screen').style.display              = 'none';
   document.getElementById('btn-dashboard-retour-orga').style.display = 'none';
   document.getElementById('btn-dashboard-add-perso').style.display   = 'none';
+  document.getElementById('btn-joueur-add-perso').style.display      = '';
   document.getElementById('dashboard-label').textContent             = `${state.prenomJoueur} ${state.nomJoueur}`;
   document.getElementById('dashboard-titre').textContent             = `Mes Personnages`;
   document.getElementById('dashboard-sous-titre').textContent        = `Bienvenue, ${state.prenomJoueur} — choisissez un personnage`;
@@ -1355,6 +1360,21 @@ async function loadDashboard() {
   state.allPersos = result && result.personnages ? result.personnages : [];
   state.cache.persosByEmail[state.email] = state.allPersos;
   renderDashboard(state.allPersos);
+}
+
+async function creerPersoJoueur() {
+  const nom = prompt('Nom de votre nouveau personnage :');
+  if (!nom || !nom.trim()) return;
+  await withBtnLoading('btn-joueur-add-perso', 'Création…', async () => {
+    const r = await gs('addPersonnageJoueur', state.email, nom.trim());
+    if (r && r.ok) {
+      delete state.cache.persosByEmail[state.email];
+      showToast('✦ Personnage créé !');
+      await loadDashboard();
+    } else {
+      showToast(r && r.msg ? r.msg : 'Erreur lors de la création.');
+    }
+  });
 }
 
 function renderDashboard(list) {
@@ -1442,7 +1462,7 @@ async function ouvrirFiche(idPerso) {
     data.perso.notifNonLue = '0';
     const p = state.allPersos.find(x => x.idPerso === idPerso);
     if (p) p.notifNonLue = '0';
-    gs('clearNotifPerso', state.email, idPerso); // en arrière-plan, sans bloquer l'affichage
+    gs('clearNotifPerso', state.email, idPerso);
   }
 }
 
@@ -1875,6 +1895,7 @@ async function orgaViewJoueur(email, nom, prenom) {
   document.getElementById('dashboard-screen').style.display          = '';
   document.getElementById('btn-dashboard-retour-orga').style.display = '';
   document.getElementById('btn-dashboard-add-perso').style.display   = '';
+  document.getElementById('btn-joueur-add-perso').style.display      = 'none';
   document.getElementById('dashboard-label').textContent             = `Orga — ${prenom} ${nom}`;
   document.getElementById('dashboard-titre').textContent             = `Personnages de ${prenom} ${nom}`;
   document.getElementById('dashboard-sous-titre').textContent        = 'Cliquez sur un personnage pour voir sa fiche';
