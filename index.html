@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Chroniques de Faërie — Espace Joueur</title>
-  <link rel="icon" href="https://raw.githubusercontent.com/FaerieOrga/images-forum/main/logo32%20copie.jpg" />
+<link rel="icon" href="https://raw.githubusercontent.com/FaerieOrga/images-forum/main/logo32%20copie.jpg" />
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=IM+Fell+English:ital@0;1&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -17,7 +17,7 @@
   --gold-light:   #c9a84c;
   --border:       #6b4c1e;
   --shadow:       rgba(30,15,5,0.45);
-  --bg-img:       url('https://drive.google.com/uc?export=view&id=142vQlX6NsPL118l3x-VHn9iNx94Vydng');
+  --bg-img:       url('https://drive.google.com/thumbnail?id=142vQlX6NsPL118l3x-VHn9iNx94Vydng&sz=w1600');
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -153,15 +153,16 @@ textarea { min-height: 180px; resize: vertical; line-height: 1.7; }
   letter-spacing: 2px;
   cursor: pointer;
   text-transform: uppercase;
-  transition: background 0.2s, color 0.2s;
+  transition: background 0.2s, color 0.2s, opacity 0.2s;
 }
-.btn:hover { background: var(--gold); color: var(--ink); }
-.btn-full  { width: 100%; text-align: center; }
-.btn-sm    { padding: 6px 16px; font-size: 0.75rem; }
+.btn:hover:not(:disabled) { background: var(--gold); color: var(--ink); }
+.btn:disabled { opacity: 0.55; cursor: wait; }
+.btn-full   { width: 100%; text-align: center; }
+.btn-sm     { padding: 6px 16px; font-size: 0.75rem; }
 .btn-danger { background: var(--red-blood); border-color: var(--red-blood); color: #fff; }
-.btn-danger:hover { background: #6b0f0f; }
+.btn-danger:hover:not(:disabled) { background: #6b0f0f; }
 .btn-orga { background: var(--red-blood); }
-.btn-orga:hover { background: #6b0f0f; }
+.btn-orga:hover:not(:disabled) { background: #6b0f0f; }
 .btn-ghost {
   background: transparent;
   border: 1px solid var(--border);
@@ -173,7 +174,8 @@ textarea { min-height: 180px; resize: vertical; line-height: 1.7; }
   border-radius: 2px;
   transition: background 0.2s;
 }
-.btn-ghost:hover { background: rgba(154,123,47,0.15); }
+.btn-ghost:hover:not(:disabled) { background: rgba(154,123,47,0.15); }
+.btn-ghost:disabled { opacity: 0.55; cursor: wait; }
 
 /* ── MESSAGES ── */
 .msg-error {
@@ -229,7 +231,6 @@ textarea { min-height: 180px; resize: vertical; line-height: 1.7; }
   font-size: 1rem;
 }
 
-/* Cartes personnages */
 .persos-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -245,6 +246,7 @@ textarea { min-height: 180px; resize: vertical; line-height: 1.7; }
   overflow: hidden;
 }
 .perso-card:hover { box-shadow: 0 4px 20px var(--shadow); transform: translateY(-2px); }
+.perso-card.loading { opacity: 0.65; pointer-events: none; }
 .perso-card-photo {
   width: 100%;
   height: 180px;
@@ -726,7 +728,7 @@ textarea { min-height: 180px; resize: vertical; line-height: 1.7; }
           <label>Mot de passe</label>
           <input type="password" id="login-mdp" placeholder="••••••••" onkeydown="if(event.key==='Enter') doLoginJoueur()">
         </div>
-        <button class="btn btn-full" onclick="doLoginJoueur()">Accéder à mon espace</button>
+        <button class="btn btn-full" id="btn-login-joueur" onclick="doLoginJoueur()">Accéder à mon espace</button>
         <div class="msg-error" id="err-joueur">Email ou mot de passe incorrect.</div>
       </div>
       <div id="form-orga" style="display:none">
@@ -734,7 +736,7 @@ textarea { min-height: 180px; resize: vertical; line-height: 1.7; }
           <label>Mot de passe organisateur</label>
           <input type="password" id="login-orga-pwd" placeholder="••••••••" onkeydown="if(event.key==='Enter') doLoginOrga()">
         </div>
-        <button class="btn btn-orga btn-full" onclick="doLoginOrga()">Accès organisateur</button>
+        <button class="btn btn-orga btn-full" id="btn-login-orga" onclick="doLoginOrga()">Accès organisateur</button>
         <div class="msg-error" id="err-orga">Mot de passe incorrect.</div>
       </div>
     </div>
@@ -791,7 +793,7 @@ textarea { min-height: 180px; resize: vertical; line-height: 1.7; }
       <div class="onglets-nav">
         <button class="onglet-btn active" onclick="showOnglet('bg', this)">Le BG</button>
         <button class="onglet-btn" id="onglet-orga-btn" onclick="showOnglet('orga', this)">Notes Orga</button>
-        <button class="onglet-btn" onclick="showOnglet('liens', this)">Les Liens</button>
+        <button class="onglet-btn" id="onglet-liens-btn" onclick="showOnglet('liens', this)">Les Liens</button>
         <button class="onglet-btn" id="onglet-chr-btn" onclick="showOnglet('chroniques', this)">Chroniques de votre perso</button>
       </div>
 
@@ -825,7 +827,7 @@ textarea { min-height: 180px; resize: vertical; line-height: 1.7; }
         <div class="notes-orga-bloc" id="notes-orga-edit-zone" style="display:none">
           <textarea id="no-notes-inline" style="min-height:200px;background:rgba(255,255,255,0.3)"></textarea>
           <div style="display:flex;gap:8px;margin-top:10px">
-            <button class="btn btn-sm" onclick="doSaveNotesOrgaInline()">Sauvegarder</button>
+            <button class="btn btn-sm" id="btn-save-notes-inline" onclick="doSaveNotesOrgaInline()">Sauvegarder</button>
             <button class="btn-ghost" onclick="toggleNotesOrgaEdit(false)">Annuler</button>
           </div>
         </div>
@@ -865,7 +867,7 @@ textarea { min-height: 180px; resize: vertical; line-height: 1.7; }
               <div class="chronique-editor-meta" id="chr-edit-meta"></div>
             </div>
             <div style="display:flex;gap:8px;flex-wrap:wrap">
-              <button class="btn btn-sm" onclick="saveChronique()">💾 Sauvegarder</button>
+              <button class="btn btn-sm" id="btn-save-chr" onclick="saveChronique()">💾 Sauvegarder</button>
               <button class="btn-ghost" id="btn-delete-chr" onclick="deleteChronique()">🗑 Supprimer</button>
               <button class="btn-ghost" onclick="retourChroniques()">← Retour</button>
             </div>
@@ -896,7 +898,7 @@ textarea { min-height: 180px; resize: vertical; line-height: 1.7; }
       <div class="orga-toolbar">
         <button class="btn btn-sm" onclick="openAddJoueur()">+ Nouveau joueur</button>
         <button class="btn btn-sm" onclick="openAddPersoOrga()">+ Nouveau personnage</button>
-        <button class="btn btn-sm" onclick="initSheetOrga()">Initialiser le Sheet</button>
+        <button class="btn btn-sm" id="btn-init-sheet" onclick="initSheetOrga()">Initialiser le Sheet</button>
         <input type="text" id="orga-search" placeholder="Filtrer…" style="max-width:200px;margin-left:auto" oninput="filterJoueurs(this.value)">
       </div>
       <table class="orga-table">
@@ -943,8 +945,6 @@ textarea { min-height: 180px; resize: vertical; line-height: 1.7; }
 <button class="chat-btn-fixed" id="chat-btn-fixed" onclick="openChat()" style="display:none">✉ Message</button>
 
 <!-- ══ MODALES ══ -->
-
-<!-- Modifier fiche -->
 <div class="modal-overlay" id="modal-edit">
   <div class="modal-box modal-box-wide">
     <button class="modal-close" onclick="closeModal('modal-edit')">✕</button>
@@ -973,7 +973,7 @@ textarea { min-height: 180px; resize: vertical; line-height: 1.7; }
           </select>
         </div>
         <div id="row-sf" class="form-group"><label>URL Savoir-faire</label><input type="url" id="e-sf" placeholder="https://docs.google.com/…"></div>
-        <div id="row-photo" class="form-group"><label>URL photo</label><input type="url" id="e-photo" placeholder="https://drive.google.com/thumbnail?id=…&sz=w400"></div>
+        <div id="row-photo" class="form-group"><label>URL photo</label><input type="url" id="e-photo" placeholder="https://drive.google.com/…"></div>
         <div id="row-liens-utiles" class="form-group">
           <label>Liens utiles (jusqu'à 3)</label>
           <div style="display:grid;grid-template-columns:1fr 2fr;gap:6px;margin-bottom:6px">
@@ -991,13 +991,12 @@ textarea { min-height: 180px; resize: vertical; line-height: 1.7; }
         </div>
       </div>
     </div>
-    <button class="btn btn-full" style="margin-top:20px" onclick="saveFicheJoueur()">Sauvegarder</button>
+    <button class="btn btn-full" id="btn-save-fiche" style="margin-top:20px" onclick="saveFicheJoueur()">Sauvegarder</button>
     <div class="msg-error" id="err-edit"></div>
     <div class="msg-success" id="ok-edit"></div>
   </div>
 </div>
 
-<!-- Ajouter/modifier lien -->
 <div class="modal-overlay" id="modal-lien">
   <div class="modal-box">
     <button class="modal-close" onclick="closeModal('modal-lien')">✕</button>
@@ -1018,12 +1017,11 @@ textarea { min-height: 180px; resize: vertical; line-height: 1.7; }
     <div class="form-group"><label>Type de lien</label><input type="text" id="l-type" placeholder="ex: Méfiance, Rivalité, Alliance…"></div>
     <div class="form-group"><label>Notes sur la relation</label><textarea id="l-notes" style="min-height:120px"></textarea></div>
     <div class="form-group"><label>URL photo</label><input type="url" id="l-photo" placeholder="https://…"></div>
-    <button class="btn btn-full" onclick="saveLienJoueur()">Sauvegarder ce lien</button>
+    <button class="btn btn-full" id="btn-save-lien" onclick="saveLienJoueur()">Sauvegarder ce lien</button>
     <div class="msg-error" id="err-lien"></div>
   </div>
 </div>
 
-<!-- Ajouter joueur (orga) -->
 <div class="modal-overlay" id="modal-add-joueur">
   <div class="modal-box">
     <button class="modal-close" onclick="closeModal('modal-add-joueur')">✕</button>
@@ -1038,13 +1036,12 @@ textarea { min-height: 180px; resize: vertical; line-height: 1.7; }
     </div>
     <div class="form-group"><label>Nom</label><input type="text" id="aj-nom"></div>
     <div class="form-group"><label>Prénom</label><input type="text" id="aj-prenom"></div>
-    <button class="btn btn-full" onclick="doAddJoueur()">Créer le compte</button>
+    <button class="btn btn-full" id="btn-add-joueur" onclick="doAddJoueur()">Créer le compte</button>
     <div class="msg-error" id="err-aj"></div>
     <div class="msg-success" id="ok-aj"></div>
   </div>
 </div>
 
-<!-- Ajouter personnage (orga) -->
 <div class="modal-overlay" id="modal-add-perso">
   <div class="modal-box">
     <button class="modal-close" onclick="closeModal('modal-add-perso')">✕</button>
@@ -1063,13 +1060,12 @@ textarea { min-height: 180px; resize: vertical; line-height: 1.7; }
         <option value="PNJ prestataire">PNJ prestataire</option>
       </select>
     </div>
-    <button class="btn btn-full" onclick="doAddPerso()">Créer le personnage</button>
+    <button class="btn btn-full" id="btn-add-perso" onclick="doAddPerso()">Créer le personnage</button>
     <div class="msg-error" id="err-ap"></div>
     <div class="msg-success" id="ok-ap"></div>
   </div>
 </div>
 
-<!-- Notes orga (modale orga depuis tableau) -->
 <div class="modal-overlay" id="modal-notes-orga">
   <div class="modal-box">
     <button class="modal-close" onclick="closeModal('modal-notes-orga')">✕</button>
@@ -1081,7 +1077,6 @@ textarea { min-height: 180px; resize: vertical; line-height: 1.7; }
   </div>
 </div>
 
-<!-- Chat / Message -->
 <div class="modal-overlay" id="modal-chat">
   <div class="modal-box">
     <button class="modal-close" onclick="closeModal('modal-chat')">✕</button>
@@ -1090,18 +1085,17 @@ textarea { min-height: 180px; resize: vertical; line-height: 1.7; }
       Votre message sera transmis par email à l'équipe organisatrice.
     </div>
     <div class="form-group"><label>Votre message</label><textarea id="chat-message" style="min-height:160px" placeholder="Écrivez votre message ici…"></textarea></div>
-    <button class="btn btn-full" onclick="doSendMessage()">Envoyer le message</button>
+    <button class="btn btn-full" id="btn-send-chat" onclick="doSendMessage()">Envoyer le message</button>
     <div class="msg-error" id="err-chat"></div>
     <div class="msg-success" id="ok-chat"></div>
   </div>
 </div>
 
-<!-- Toast -->
 <div class="toast" id="toast"></div>
 
 <script>
 // ── CONFIG ──────────────────────────────────────────────────
-const GS_URL = 'https://script.google.com/macros/s/AKfycbwjgk_hDznYr0BiZUL4aS3QIfLfjf0THPZvYudVaH79BxDzGSNgAe7_0demWJcJHV1SSw/exec';
+const GS_URL = 'COLLE_TON_URL_EXEC_ICI';
 
 const state = {
   role:             null,
@@ -1115,8 +1109,10 @@ const state = {
   currentChronique: null,
   editLienIndex:    -1,
   allJoueurs:       [],
-  currentOrgaEmail: null,
-  currentOrgaPersoId: null
+  cache: {
+    persosByEmail: {}, // email -> array de persos
+    fiches: {}         // idPerso -> { perso, notesOrga, liens, chroniques }
+  }
 };
 
 // ── APPEL GS ────────────────────────────────────────────────
@@ -1135,6 +1131,20 @@ function showMsg(id, msg, type) {
   el.className = type === 'success' ? 'msg-success' : 'msg-error';
 }
 function hideMsg(id) { const el = document.getElementById(id); if (el) el.style.display = 'none'; }
+
+async function withBtnLoading(btnId, loadingText, asyncFn) {
+  const btn = document.getElementById(btnId);
+  if (!btn) return asyncFn();
+  const orig = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = loadingText;
+  try {
+    return await asyncFn();
+  } finally {
+    btn.disabled = false;
+    btn.textContent = orig;
+  }
+}
 
 let toastTimer;
 function showToast(msg) {
@@ -1164,6 +1174,7 @@ function switchLogin(mode, btn) {
 
 function logout() {
   state.role = null; state.email = null; state.perso = null;
+  state.cache = { persosByEmail: {}, fiches: {} };
   document.getElementById('login-screen').style.display     = '';
   document.getElementById('dashboard-screen').style.display = 'none';
   document.getElementById('fiche-screen').style.display     = 'none';
@@ -1171,7 +1182,7 @@ function logout() {
   document.getElementById('chat-btn-fixed').style.display   = 'none';
 }
 
-// ── LIENS UTILES ────────────────────────────────────────────
+// ── LIENS UTILES & DRIVE ────────────────────────────────────
 function parseLiensUtiles(str) {
   if (!str) return [];
   return str.split('|').map(p => {
@@ -1200,45 +1211,51 @@ function renderLiensUtiles(str) {
   ).join('');
 }
 
-  function formatDriveImgUrl(url) {
+function formatDriveImgUrl(url) {
   if (!url) return '';
   const match = url.match(/(?:\/d\/|[?&]id=)([a-zA-Z0-9_-]{20,})/);
   return match ? 'https://drive.google.com/thumbnail?id=' + match[1] + '&sz=w600' : url;
 }
-  
+
 // ── LOGIN ────────────────────────────────────────────────────
 async function doLoginJoueur() {
   const email = document.getElementById('login-email').value.trim();
   const mdp   = document.getElementById('login-mdp').value;
   if (!email || !mdp) { showMsg('err-joueur', 'Renseignez email et mot de passe.'); return; }
   hideMsg('err-joueur');
-  const r = await gs('loginJoueur', email, mdp);
-  if (r.ok) {
-    state.role         = 'joueur';
-    state.email        = r.email;
-    state.nomJoueur    = r.nomJoueur;
-    state.prenomJoueur = r.prenomJoueur;
-    document.getElementById('login-screen').style.display   = 'none';
-    document.getElementById('chat-btn-fixed').style.display = '';
-    pushNavState('dashboard');
-    await loadDashboard();
-  } else {
-    showMsg('err-joueur', 'Email ou mot de passe incorrect.');
-  }
+
+  await withBtnLoading('btn-login-joueur', 'Connexion…', async () => {
+    const r = await gs('loginJoueur', email, mdp);
+    if (r.ok) {
+      state.role         = 'joueur';
+      state.email        = r.email;
+      state.nomJoueur    = r.nomJoueur;
+      state.prenomJoueur = r.prenomJoueur;
+      document.getElementById('login-screen').style.display   = 'none';
+      document.getElementById('chat-btn-fixed').style.display = '';
+      pushNavState('dashboard');
+      await loadDashboard();
+    } else {
+      showMsg('err-joueur', 'Email ou mot de passe incorrect.');
+    }
+  });
 }
 
 async function doLoginOrga() {
   const pwd = document.getElementById('login-orga-pwd').value;
-  const r   = await gs('loginOrga', pwd);
-  if (r.ok) {
-    state.role = 'orga';
-    document.getElementById('login-screen').style.display = 'none';
-    document.getElementById('orga-screen').style.display  = '';
-    pushNavState('orga');
-    await loadAllJoueurs();
-  } else {
-    showMsg('err-orga', 'Mot de passe incorrect.');
-  }
+  hideMsg('err-orga');
+  await withBtnLoading('btn-login-orga', 'Vérification…', async () => {
+    const r = await gs('loginOrga', pwd);
+    if (r.ok) {
+      state.role = 'orga';
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('orga-screen').style.display  = '';
+      pushNavState('orga');
+      await loadAllJoueurs();
+    } else {
+      showMsg('err-orga', 'Mot de passe incorrect.');
+    }
+  });
 }
 
 // ── DASHBOARD ────────────────────────────────────────────────
@@ -1251,8 +1268,16 @@ async function loadDashboard() {
   document.getElementById('dashboard-titre').textContent             = `Mes Personnages`;
   document.getElementById('dashboard-sous-titre').textContent        = `Bienvenue, ${state.prenomJoueur} — choisissez un personnage`;
 
+  if (state.cache.persosByEmail[state.email]) {
+    state.allPersos = state.cache.persosByEmail[state.email];
+    renderDashboard(state.allPersos);
+    return;
+  }
+
+  document.getElementById('persos-grid').innerHTML = '<div style="font-family:\'IM Fell English\',serif;font-style:italic;color:var(--ink-light);padding:20px 0;">Chargement des personnages…</div>';
   const result = await gs('getPersonnages', state.email);
   state.allPersos = result && result.personnages ? result.personnages : [];
+  state.cache.persosByEmail[state.email] = state.allPersos;
   renderDashboard(state.allPersos);
 }
 
@@ -1263,7 +1288,7 @@ function renderDashboard(list) {
     return;
   }
   grid.innerHTML = list.map(p => `
-    <div class="perso-card" onclick="state.role === 'orga-view' ? ouvrirFicheOrga(state.email, '${p.idPerso}') : ouvrirFiche('${p.idPerso}')">
+    <div class="perso-card" id="card-${p.idPerso}" onclick="handleSelectPerso('${p.idPerso}')">
       ${p.notifNonLue === '1' ? '<div class="notif-badge">!</div>' : ''}
       ${p.photoUrl
         ? `<img class="perso-card-photo" src="${formatDriveImgUrl(p.photoUrl)}" alt="${p.nomPersonnage}">`
@@ -1277,6 +1302,20 @@ function renderDashboard(list) {
   `).join('');
 }
 
+async function handleSelectPerso(idPerso) {
+  const card = document.getElementById('card-' + idPerso);
+  if (card) card.classList.add('loading');
+  try {
+    if (state.role === 'orga-view') {
+      await ouvrirFicheOrga(state.email, idPerso);
+    } else {
+      await ouvrirFiche(idPerso);
+    }
+  } finally {
+    if (card) card.classList.remove('loading');
+  }
+}
+
 function retourDashboard() {
   if (state.role === 'orga' || state.role === 'orga-view') {
     orgaViewJoueur(state.email, state.nomJoueur, state.prenomJoueur);
@@ -1284,39 +1323,59 @@ function retourDashboard() {
   }
   document.getElementById('fiche-screen').style.display     = 'none';
   document.getElementById('dashboard-screen').style.display = '';
+  renderDashboard(state.allPersos);
 }
 
-// ── FICHE PERSO ──────────────────────────────────────────────
-async function ouvrirFiche(idPerso) {
-  const result = await gs('getPersonnage', state.email, idPerso);
-  if (!result || !result.perso) { showToast('Personnage introuvable'); return; }
-  state.perso = result.perso;
-
-  if (result.perso.notifNonLue === '1') {
-    await gs('clearNotifPerso', state.email, idPerso);
-    const p = state.allPersos.find(x => x.idPerso === idPerso);
-    if (p) p.notifNonLue = '0';
+// ── CHARGEMENT FICHE (1 SEUL APPEL + CACHE) ──────────────────
+async function fetchFicheComplete(email, idPerso) {
+  if (state.cache.fiches[idPerso]) {
+    return state.cache.fiches[idPerso];
   }
+  const data = await gs('getFicheComplete', email, idPerso);
+  if (data && data.perso) {
+    state.cache.fiches[idPerso] = data;
+  }
+  return data;
+}
+
+function appliquerFicheSurEcran(data, isOrgaView) {
+  state.perso      = data.perso;
+  state.liens      = data.liens || [];
+  state.chroniques = data.chroniques || [];
 
   document.getElementById('dashboard-screen').style.display = 'none';
   document.getElementById('fiche-screen').style.display     = '';
-  document.getElementById('btn-retour-orga').style.display  = 'none';
-  pushNavState('fiche');
+  document.getElementById('btn-retour-orga').style.display  = isOrgaView ? '' : 'none';
 
-  renderFiche(result.perso);
+  renderFiche(state.perso);
   showOnglet('bg', document.querySelector('.onglet-btn'));
-
-  const notes = await gs('getNotesOrga', state.email, idPerso);
-  renderNotesOrga(notes);
-
-  const liensR = await gs('getLiens', state.email, idPerso);
-  state.liens = liensR && liensR.liens ? liensR.liens : [];
+  renderNotesOrga(data.notesOrga || {});
   renderLiens(state.liens);
-
-  const chrR = await gs('getChroniques', state.email, idPerso);
-  state.chroniques = chrR && chrR.chroniques ? chrR.chroniques : [];
   renderChroniques(state.chroniques);
   updateOngletChrNotif();
+}
+
+async function ouvrirFiche(idPerso) {
+  const data = await fetchFicheComplete(state.email, idPerso);
+  if (!data || !data.perso) { showToast('Personnage introuvable'); return; }
+
+  pushNavState('fiche');
+  appliquerFicheSurEcran(data, false);
+
+  if (data.perso.notifNonLue === '1') {
+    data.perso.notifNonLue = '0';
+    const p = state.allPersos.find(x => x.idPerso === idPerso);
+    if (p) p.notifNonLue = '0';
+    gs('clearNotifPerso', state.email, idPerso); // en arrière-plan, sans bloquer l'affichage
+  }
+}
+
+async function ouvrirFicheOrga(email, idPerso) {
+  const data = await fetchFicheComplete(email, idPerso);
+  if (!data || !data.perso) { showToast('Personnage introuvable'); return; }
+
+  pushNavState('orga-fiche');
+  appliquerFicheSurEcran(data, true);
 }
 
 function renderFiche(p) {
@@ -1340,12 +1399,11 @@ function renderFiche(p) {
   renderLiensUtiles(p.liensUtiles);
   document.getElementById('fi-histoire').textContent = p.histoire || '(Histoire non renseignée)';
 
- if (p.photoUrl) {
+  if (p.photoUrl) {
     document.getElementById('fi-photo').src           = formatDriveImgUrl(p.photoUrl);
     document.getElementById('fi-photo').style.display = '';
     document.getElementById('fi-photo-ph').style.display = 'none';
-  }
-  else {
+  } else {
     document.getElementById('fi-photo').style.display    = 'none';
     document.getElementById('fi-photo-ph').style.display = '';
   }
@@ -1426,17 +1484,24 @@ async function saveFicheJoueur() {
     photoUrl:      isOrga ? document.getElementById('e-photo').value.trim() : state.perso.photoUrl,
     liensUtiles:   isOrga ? serializeLiensUtiles() : state.perso.liensUtiles || ''
   };
-  try {
-    const r = await gs('savePersonnage', state.email, state.perso.idPerso, data, isOrga);
-    if (r.ok) {
-      state.perso = { ...state.perso, ...data };
-      renderFiche(state.perso);
-      closeModal('modal-edit');
-      showToast('✦ Fiche sauvegardée');
-    } else {
-      showMsg('err-edit', r.msg || 'Erreur lors de la sauvegarde.');
-    }
-  } catch(e) { showMsg('err-edit', 'Erreur : ' + e.message); }
+  await withBtnLoading('btn-save-fiche', 'Sauvegarde…', async () => {
+    try {
+      const r = await gs('savePersonnage', state.email, state.perso.idPerso, data, isOrga);
+      if (r.ok) {
+        state.perso = { ...state.perso, ...data };
+        if (state.cache.fiches[state.perso.idPerso]) {
+          state.cache.fiches[state.perso.idPerso].perso = state.perso;
+        }
+        const idx = state.allPersos.findIndex(x => x.idPerso === state.perso.idPerso);
+        if (idx >= 0) state.allPersos[idx] = { ...state.allPersos[idx], ...data };
+        renderFiche(state.perso);
+        closeModal('modal-edit');
+        showToast('✦ Fiche sauvegardée');
+      } else {
+        showMsg('err-edit', r.msg || 'Erreur lors de la sauvegarde.');
+      }
+    } catch(e) { showMsg('err-edit', 'Erreur : ' + e.message); }
+  });
 }
 
 // ── NOTES ORGA (inline) ──────────────────────────────────────
@@ -1444,18 +1509,24 @@ function toggleNotesOrgaEdit(open) {
   document.getElementById('notes-orga-edit-zone').style.display = open ? '' : 'none';
   document.getElementById('notes-orga-view-zone').style.display = open ? 'none' : '';
   if (open) {
-    document.getElementById('no-notes-inline').value = document.getElementById('fi-notes-orga').textContent;
+    const txt = document.getElementById('fi-notes-orga').textContent;
+    document.getElementById('no-notes-inline').value = txt === 'Aucune note pour l\'instant.' ? '' : txt;
   }
 }
 
 async function doSaveNotesOrgaInline() {
   const notes = document.getElementById('no-notes-inline').value;
-  try {
-    await gs('saveNotesOrga', state.email, state.perso.idPerso, notes);
-    document.getElementById('fi-notes-orga').textContent = notes || 'Aucune note pour l\'instant.';
-    toggleNotesOrgaEdit(false);
-    showToast('✦ Notes sauvegardées');
-  } catch(e) { showToast('Erreur : ' + e.message); }
+  await withBtnLoading('btn-save-notes-inline', 'Sauvegarde…', async () => {
+    try {
+      await gs('saveNotesOrga', state.email, state.perso.idPerso, notes);
+      document.getElementById('fi-notes-orga').textContent = notes || 'Aucune note pour l\'instant.';
+      if (state.cache.fiches[state.perso.idPerso]) {
+        state.cache.fiches[state.perso.idPerso].notesOrga = { notes, dateModif: 'À l\'instant' };
+      }
+      toggleNotesOrgaEdit(false);
+      showToast('✦ Notes sauvegardées');
+    } catch(e) { showToast('Erreur : ' + e.message); }
+  });
 }
 
 // ── LIENS ────────────────────────────────────────────────────
@@ -1465,7 +1536,7 @@ function renderLiens(list) {
     grid.innerHTML = '<div style="font-family:\'IM Fell English\',serif;font-style:italic;color:var(--ink-light);">Aucun lien renseigné.</div>';
     return;
   }
- grid.innerHTML = list.map((l, i) => `
+  grid.innerHTML = list.map((l, i) => `
     <div class="lien-card">
       <div>
         ${l.photoLienUrl
@@ -1525,15 +1596,19 @@ async function saveLienJoueur() {
     notesLien:      document.getElementById('l-notes').value,
     photoLienUrl:   document.getElementById('l-photo').value.trim()
   };
-  try {
-    await gs('saveLien', state.email, state.perso.idPerso, lien, state.editLienIndex);
-    if (state.editLienIndex >= 0) state.liens[state.editLienIndex] = lien;
-    else state.liens.push(lien);
-    renderLiens(state.liens);
-    closeModal('modal-lien');
-    showToast('✦ Lien sauvegardé');
-    
-  } catch(e) { showMsg('err-lien', 'Erreur : ' + e.message); }
+  await withBtnLoading('btn-save-lien', 'Sauvegarde…', async () => {
+    try {
+      await gs('saveLien', state.email, state.perso.idPerso, lien, state.editLienIndex);
+      if (state.editLienIndex >= 0) state.liens[state.editLienIndex] = lien;
+      else state.liens.push(lien);
+      if (state.cache.fiches[state.perso.idPerso]) {
+        state.cache.fiches[state.perso.idPerso].liens = state.liens;
+      }
+      renderLiens(state.liens);
+      closeModal('modal-lien');
+      showToast('✦ Lien sauvegardé');
+    } catch(e) { showMsg('err-lien', 'Erreur : ' + e.message); }
+  });
 }
 
 async function doDeleteLien(i) {
@@ -1541,6 +1616,9 @@ async function doDeleteLien(i) {
   try {
     await gs('deleteLien', state.email, state.perso.idPerso, i);
     state.liens.splice(i, 1);
+    if (state.cache.fiches[state.perso.idPerso]) {
+      state.cache.fiches[state.perso.idPerso].liens = state.liens;
+    }
     renderLiens(state.liens);
     showToast('✦ Lien supprimé');
   } catch(e) { showToast('Erreur : ' + e.message); }
@@ -1598,17 +1676,20 @@ function retourChroniques() {
   renderChroniques(state.chroniques);
 }
 
-function openAddChronique() {
+async function openAddChronique() {
   const titre = prompt('Titre de la nouvelle chronique :');
   if (!titre) return;
   const auteur = (state.role === 'joueur') ? 'joueur' : 'orga';
-  gs('addChronique', state.email, state.perso.idPerso, titre, auteur).then(r => {
+  await withBtnLoading('btn-add-chronique', 'Création…', async () => {
+    const r = await gs('addChronique', state.email, state.perso.idPerso, titre, auteur);
     if (r.ok) {
-      gs('getChroniques', state.email, state.perso.idPerso).then(res => {
-        state.chroniques = res && res.chroniques ? res.chroniques : [];
-        renderChroniques(state.chroniques);
-        showToast('✦ Chronique créée');
-      });
+      const res = await gs('getChroniques', state.email, state.perso.idPerso);
+      state.chroniques = res && res.chroniques ? res.chroniques : [];
+      if (state.cache.fiches[state.perso.idPerso]) {
+        state.cache.fiches[state.perso.idPerso].chroniques = state.chroniques;
+      }
+      renderChroniques(state.chroniques);
+      showToast('✦ Chronique créée');
     }
   });
 }
@@ -1618,28 +1699,35 @@ async function saveChronique() {
   const titre   = document.getElementById('chr-titre-input').value.trim() || c.titreChronique;
   const contenu = document.getElementById('chr-contenu').value;
   const auteur  = (state.role === 'joueur') ? 'joueur' : 'orga';
-  try {
-    const r = await gs('saveChronique', state.email, state.perso.idPerso, c.idChronique, contenu, titre, auteur);
-    if (r.ok) {
-      c.titreChronique = titre;
-      c.contenu        = contenu;
-      document.getElementById('chr-edit-titre').textContent = titre;
-      showToast('✦ Chronique sauvegardée');
-    } else {
-      showMsg('err-chr', 'Erreur lors de la sauvegarde.');
-    }
-  } catch(e) { showMsg('err-chr', 'Erreur : ' + e.message); }
+  await withBtnLoading('btn-save-chr', 'Sauvegarde…', async () => {
+    try {
+      const r = await gs('saveChronique', state.email, state.perso.idPerso, c.idChronique, contenu, titre, auteur);
+      if (r.ok) {
+        c.titreChronique = titre;
+        c.contenu        = contenu;
+        document.getElementById('chr-edit-titre').textContent = titre;
+        showToast('✦ Chronique sauvegardée');
+      } else {
+        showMsg('err-chr', 'Erreur lors de la sauvegarde.');
+      }
+    } catch(e) { showMsg('err-chr', 'Erreur : ' + e.message); }
+  });
 }
 
 async function deleteChronique() {
   if (!confirm('Supprimer cette chronique définitivement ?')) return;
   const c = state.currentChronique;
-  try {
-    await gs('deleteChronique', c.idChronique);
-    state.chroniques = state.chroniques.filter(x => x.idChronique !== c.idChronique);
-    retourChroniques();
-    showToast('✦ Chronique supprimée');
-  } catch(e) { showToast('Erreur : ' + e.message); }
+  await withBtnLoading('btn-delete-chr', 'Suppression…', async () => {
+    try {
+      await gs('deleteChronique', c.idChronique);
+      state.chroniques = state.chroniques.filter(x => x.idChronique !== c.idChronique);
+      if (state.cache.fiches[state.perso.idPerso]) {
+        state.cache.fiches[state.perso.idPerso].chroniques = state.chroniques;
+      }
+      retourChroniques();
+      showToast('✦ Chronique supprimée');
+    } catch(e) { showToast('Erreur : ' + e.message); }
+  });
 }
 
 // ── CHAT ─────────────────────────────────────────────────────
@@ -1652,15 +1740,21 @@ function openChat() {
 async function doSendMessage() {
   const msg = document.getElementById('chat-message').value.trim();
   if (!msg) { showMsg('err-chat', 'Écrivez un message avant d\'envoyer.'); return; }
-  try {
-    await gs('sendMessage', state.email, `${state.prenomJoueur} ${state.nomJoueur}`, msg);
-    showMsg('ok-chat', '✦ Message envoyé à l\'orga !', 'success');
-    document.getElementById('chat-message').value = '';
-  } catch(e) { showMsg('err-chat', 'Erreur : ' + e.message); }
+  await withBtnLoading('btn-send-chat', 'Envoi…', async () => {
+    try {
+      await gs('sendMessage', state.email, `${state.prenomJoueur} ${state.nomJoueur}`, msg);
+      showMsg('ok-chat', '✦ Message envoyé à l\'orga !', 'success');
+      document.getElementById('chat-message').value = '';
+    } catch(e) { showMsg('err-chat', 'Erreur : ' + e.message); }
+  });
 }
 
 // ── ORGA — TABLEAU JOUEURS ────────────────────────────────────
-async function loadAllJoueurs() {
+async function loadAllJoueurs(forceRefresh = false) {
+  if (!forceRefresh && state.allJoueurs.length > 0) {
+    renderTableJoueurs(state.allJoueurs);
+    return;
+  }
   try {
     const result     = await gs('getAllJoueurs');
     state.allJoueurs = result && result.joueurs ? result.joueurs : [];
@@ -1700,9 +1794,6 @@ async function orgaViewJoueur(email, nom, prenom) {
   state.prenomJoueur = prenom;
   state.role         = 'orga-view';
 
-  const result = await gs('getPersonnages', email);
-  state.allPersos = result && result.personnages ? result.personnages : [];
-
   document.getElementById('orga-screen').style.display               = 'none';
   document.getElementById('fiche-screen').style.display              = 'none';
   document.getElementById('dashboard-screen').style.display          = '';
@@ -1713,33 +1804,17 @@ async function orgaViewJoueur(email, nom, prenom) {
   document.getElementById('dashboard-sous-titre').textContent        = 'Cliquez sur un personnage pour voir sa fiche';
   pushNavState('orga-persos');
 
+  if (state.cache.persosByEmail[email]) {
+    state.allPersos = state.cache.persosByEmail[email];
+    renderDashboard(state.allPersos);
+    return;
+  }
+
+  document.getElementById('persos-grid').innerHTML = '<div style="font-family:\'IM Fell English\',serif;font-style:italic;color:var(--ink-light);padding:20px 0;">Chargement des personnages…</div>';
+  const result = await gs('getPersonnages', email);
+  state.allPersos = result && result.personnages ? result.personnages : [];
+  state.cache.persosByEmail[email] = state.allPersos;
   renderDashboard(state.allPersos);
-}
-
-async function ouvrirFicheOrga(email, idPerso) {
-  const result = await gs('getPersonnage', email, idPerso);
-  if (!result || !result.perso) { showToast('Personnage introuvable'); return; }
-  state.perso = result.perso;
-
-  document.getElementById('dashboard-screen').style.display = 'none';
-  document.getElementById('fiche-screen').style.display     = '';
-  document.getElementById('btn-retour-orga').style.display  = '';
-  pushNavState('orga-fiche');
-
-  renderFiche(result.perso);
-  showOnglet('bg', document.querySelector('.onglet-btn'));
-
-  const notes = await gs('getNotesOrga', email, idPerso);
-  renderNotesOrga(notes);
-
-  const liensR = await gs('getLiens', email, idPerso);
-  state.liens = liensR && liensR.liens ? liensR.liens : [];
-  renderLiens(state.liens);
-
-  const chrR = await gs('getChroniques', email, idPerso);
-  state.chroniques = chrR && chrR.chroniques ? chrR.chroniques : [];
-  renderChroniques(state.chroniques);
-  updateOngletChrNotif();
 }
 
 function retourTableau() {
@@ -1773,11 +1848,13 @@ async function doAddJoueur() {
   const nom    = document.getElementById('aj-nom').value.trim();
   const prenom = document.getElementById('aj-prenom').value.trim();
   if (!email || !mdp) { showMsg('err-aj', 'Email et mot de passe obligatoires.'); return; }
-  try {
-    await gs('addJoueur', email, mdp, nom, prenom);
-    showMsg('ok-aj', `✦ Compte créé pour ${prenom} ${nom}`, 'success');
-    await loadAllJoueurs();
-  } catch(e) { showMsg('err-aj', 'Erreur : ' + e.message); }
+  await withBtnLoading('btn-add-joueur', 'Création…', async () => {
+    try {
+      await gs('addJoueur', email, mdp, nom, prenom);
+      showMsg('ok-aj', `✦ Compte créé pour ${prenom} ${nom}`, 'success');
+      await loadAllJoueurs(true);
+    } catch(e) { showMsg('err-aj', 'Erreur : ' + e.message); }
+  });
 }
 
 // ── AJOUTER PERSONNAGE (orga) ─────────────────────────────────
@@ -1798,23 +1875,29 @@ async function doAddPerso() {
   const nom    = document.getElementById('ap-nom').value.trim();
   const statut = document.getElementById('ap-statut').value;
   if (!nom) { showMsg('err-ap', 'Nom du personnage obligatoire.'); return; }
-  try {
-    await gs('addPersonnage', email, nom, statut);
-    showMsg('ok-ap', `✦ Personnage "${nom}" créé !`, 'success');
-    if (state.role === 'orga-view' && state.email === email) {
-      const result = await gs('getPersonnages', email);
-      state.allPersos = result && result.personnages ? result.personnages : [];
-      renderDashboard(state.allPersos);
-    }
-  } catch(e) { showMsg('err-ap', 'Erreur : ' + e.message); }
+  await withBtnLoading('btn-add-perso', 'Création…', async () => {
+    try {
+      await gs('addPersonnage', email, nom, statut);
+      delete state.cache.persosByEmail[email];
+      showMsg('ok-ap', `✦ Personnage "${nom}" créé !`, 'success');
+      if (state.role === 'orga-view' && state.email === email) {
+        const result = await gs('getPersonnages', email);
+        state.allPersos = result && result.personnages ? result.personnages : [];
+        state.cache.persosByEmail[email] = state.allPersos;
+        renderDashboard(state.allPersos);
+      }
+    } catch(e) { showMsg('err-ap', 'Erreur : ' + e.message); }
+  });
 }
 
 // ── INIT SHEET ───────────────────────────────────────────────
 async function initSheetOrga() {
-  try {
-    const r = await gs('initSheet');
-    showToast('✦ ' + r);
-  } catch(e) { showToast('Erreur : ' + e.message); }
+  await withBtnLoading('btn-init-sheet', 'Initialisation…', async () => {
+    try {
+      const r = await gs('initSheet');
+      showToast('✦ ' + r);
+    } catch(e) { showToast('Erreur : ' + e.message); }
+  });
 }
 
 // ── DÉS ──────────────────────────────────────────────────────
