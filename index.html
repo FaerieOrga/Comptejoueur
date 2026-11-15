@@ -1024,7 +1024,13 @@ textarea { min-height: 180px; resize: vertical; line-height: 1.7; }
 </div>
 
 <!-- Ajouter joueur (orga) -->
-<div class="modal-overlay" id="modal-add-joueur">
+<div class="form-group">
+  <label>Mot de passe</label>
+  <div style="display:flex;gap:8px">
+    <input type="text" id="aj-mdp" placeholder="Choisissez ou générez un code">
+    <button type="button" class="btn btn-sm" onclick="genererCodeMdp()" style="white-space:nowrap">🎲 Générer</button>
+  </div>
+</div>
   <div class="modal-box">
     <button class="modal-close" onclick="closeModal('modal-add-joueur')">✕</button>
     <div class="modal-title">+ Nouveau joueur</div>
@@ -1745,9 +1751,19 @@ function retourTableau() {
   loadAllJoueurs();
 }
 
+function genererCodeMdp() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let code = '';
+  for (let i = 0; i < 6; i++) {
+    code += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  document.getElementById('aj-mdp').value = code;
+}
+  
 // ── AJOUTER JOUEUR ───────────────────────────────────────────
 function openAddJoueur() {
   ['aj-email','aj-mdp','aj-nom','aj-prenom'].forEach(id => document.getElementById(id).value = '');
+  genererCodeMdp();
   hideMsg('err-aj'); hideMsg('ok-aj');
   openModal('modal-add-joueur');
 }
