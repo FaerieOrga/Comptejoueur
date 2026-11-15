@@ -1101,7 +1101,7 @@ textarea { min-height: 180px; resize: vertical; line-height: 1.7; }
 
 <script>
 // ── CONFIG ──────────────────────────────────────────────────
-const GS_URL = 'https://script.google.com/macros/s/AKfycbyewE1Jsrsiz9TJNHWiuBOw0ZJ3CHh1-_3L-ljV4nRvDjngqmoGgd_HnD0aw4kO9kdD0Q/exec';
+const GS_URL = 'https://script.google.com/macros/s/AKfycbwjgk_hDznYr0BiZUL4aS3QIfLfjf0THPZvYudVaH79BxDzGSNgAe7_0demWJcJHV1SSw/exec';
 
 const state = {
   role:             null,
@@ -1200,6 +1200,12 @@ function renderLiensUtiles(str) {
   ).join('');
 }
 
+  function formatDriveImgUrl(url) {
+  if (!url) return '';
+  const match = url.match(/(?:\/d\/|[?&]id=)([a-zA-Z0-9_-]{20,})/);
+  return match ? 'https://drive.google.com/thumbnail?id=' + match[1] + '&sz=w600' : url;
+}
+  
 // ── LOGIN ────────────────────────────────────────────────────
 async function doLoginJoueur() {
   const email = document.getElementById('login-email').value.trim();
@@ -1260,7 +1266,7 @@ function renderDashboard(list) {
     <div class="perso-card" onclick="state.role === 'orga-view' ? ouvrirFicheOrga(state.email, '${p.idPerso}') : ouvrirFiche('${p.idPerso}')">
       ${p.notifNonLue === '1' ? '<div class="notif-badge">!</div>' : ''}
       ${p.photoUrl
-        ? `<img class="perso-card-photo" src="${p.photoUrl}" alt="${p.nomPersonnage}">`
+        ? `<img class="perso-card-photo" src="${formatDriveImgUrl(p.photoUrl)}" alt="${p.nomPersonnage}">`
         : `<div class="perso-card-photo-ph">🧙</div>`}
       <div class="perso-card-body">
         <div class="perso-card-nom">${p.nomPersonnage || '(Sans nom)'}</div>
@@ -1334,11 +1340,12 @@ function renderFiche(p) {
   renderLiensUtiles(p.liensUtiles);
   document.getElementById('fi-histoire').textContent = p.histoire || '(Histoire non renseignée)';
 
-  if (p.photoUrl) {
-    document.getElementById('fi-photo').src           = p.photoUrl;
+ if (p.photoUrl) {
+    document.getElementById('fi-photo').src           = formatDriveImgUrl(p.photoUrl);
     document.getElementById('fi-photo').style.display = '';
     document.getElementById('fi-photo-ph').style.display = 'none';
-  } else {
+  }
+  else {
     document.getElementById('fi-photo').style.display    = 'none';
     document.getElementById('fi-photo-ph').style.display = '';
   }
@@ -1458,11 +1465,11 @@ function renderLiens(list) {
     grid.innerHTML = '<div style="font-family:\'IM Fell English\',serif;font-style:italic;color:var(--ink-light);">Aucun lien renseigné.</div>';
     return;
   }
-  grid.innerHTML = list.map((l, i) => `
+ grid.innerHTML = list.map((l, i) => `
     <div class="lien-card">
       <div>
         ${l.photoLienUrl
-          ? `<img class="lien-photo" src="${l.photoLienUrl}" alt="${l.nomPersoLie}">`
+          ? `<img class="lien-photo" src="${formatDriveImgUrl(l.photoLienUrl)}" alt="${l.nomPersoLie}">`
           : `<div class="lien-photo-ph">📷</div>`}
       </div>
       <div class="lien-infos">
@@ -1525,6 +1532,7 @@ async function saveLienJoueur() {
     renderLiens(state.liens);
     closeModal('modal-lien');
     showToast('✦ Lien sauvegardé');
+    
   } catch(e) { showMsg('err-lien', 'Erreur : ' + e.message); }
 }
 
