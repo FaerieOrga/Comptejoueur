@@ -1095,7 +1095,7 @@ textarea { min-height: 180px; resize: vertical; line-height: 1.7; }
 
 <script>
 // ── CONFIG ──────────────────────────────────────────────────
-const GS_URL = '<?= ScriptApp.getService().getUrl() ?>';
+const GS_URL = 'https://script.google.com/macros/s/AKfycbyewE1Jsrsiz9TJNHWiuBOw0ZJ3CHh1-_3L-ljV4nRvDjngqmoGgd_HnD0aw4kO9kdD0Q/exec';
 
 const state = {
   role:             null,
@@ -1240,7 +1240,7 @@ function renderDashboard(list) {
     return;
   }
   grid.innerHTML = list.map(p => `
-    <div class="perso-card" onclick="ouvrirFiche('${p.idPerso}')">
+    <div class="perso-card" onclick="state.role === 'orga-view' ? ouvrirFicheOrga(state.email, '${p.idPerso}') : ouvrirFiche('${p.idPerso}')">
       ${p.notifNonLue === '1' ? '<div class="notif-badge">!</div>' : ''}
       ${p.photoUrl
         ? `<img class="perso-card-photo" src="${p.photoUrl}" alt="${p.nomPersonnage}">`
