@@ -734,11 +734,15 @@ textarea { min-height: 180px; resize: vertical; line-height: 1.7; }
       </div>
       <div id="form-orga" style="display:none">
         <div class="form-group">
-          <label>Mot de passe organisateur</label>
+          <label>Adresse e-mail organisateur</label>
+          <input type="email" id="login-orga-email" placeholder="orga@email.com (ou vide pour code maître)" onkeydown="if(event.key==='Enter') doLoginOrga()">
+        </div>
+        <div class="form-group">
+          <label>Mot de passe</label>
           <input type="password" id="login-orga-pwd" placeholder="••••••••" onkeydown="if(event.key==='Enter') doLoginOrga()">
         </div>
         <button class="btn btn-orga btn-full" id="btn-login-orga" onclick="doLoginOrga()">Accès organisateur</button>
-        <div class="msg-error" id="err-orga">Mot de passe incorrect.</div>
+        <div class="msg-error" id="err-orga">Identifiants organisateur incorrects.</div>
       </div>
     </div>
   </div>
@@ -899,6 +903,7 @@ textarea { min-height: 180px; resize: vertical; line-height: 1.7; }
       <div class="orga-toolbar">
         <button class="btn btn-sm" onclick="openAddJoueur()">+ Nouveau joueur</button>
         <button class="btn btn-sm" onclick="openAddPersoOrga()">+ Nouveau personnage</button>
+        <button class="btn btn-sm" id="btn-init-sheet" onclick="initSheetOrga()">Initialiser le Sheet</button>
         <button class="btn btn-sm" id="btn-init-sheet" onclick="initSheetOrga()">Initialiser le Sheet</button>
         <input type="text" id="orga-search" placeholder="Filtrer…" style="max-width:200px;margin-left:auto" oninput="filterJoueurs(this.value)">
       </div>
@@ -1092,6 +1097,33 @@ textarea { min-height: 180px; resize: vertical; line-height: 1.7; }
   </div>
 </div>
 
+<div class="modal-overlay" id="modal-orgas">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('modal-orgas')">✕</button>
+    <div class="modal-title">⚔ Équipe Organisatrice</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div class="form-group"><label>Prénom</label><input type="text" id="ao-prenom"></div>
+      <div class="form-group"><label>Nom</label><input type="text" id="ao-nom"></div>
+    </div>
+    <div class="form-group"><label>Email</label><input type="email" id="ao-email"></div>
+    <div class="form-group">
+      <label>Mot de passe</label>
+      <div style="display:flex;gap:8px">
+        <input type="text" id="ao-mdp">
+        <button type="button" class="btn btn-sm" onclick="document.getElementById('ao-mdp').value = Math.random().toString(36).slice(-8).toUpperCase()">🎲 Générer</button>
+      </div>
+    </div>
+    <button class="btn btn-orga btn-full" onclick="doAddOrga()">+ Ajouter cet organisateur</button>
+    <div class="msg-error" id="err-ao"></div>
+    <div class="msg-success" id="ok-ao"></div>
+    <hr class="divider">
+    <table class="orga-table">
+      <thead><tr><th>Nom</th><th>Email</th><th></th></tr></thead>
+      <tbody id="orga-list-body"></tbody>
+    </table>
+  </div>
+</div>
+  
 <div class="toast" id="toast"></div>
 
 <script>
@@ -1243,20 +1275,63 @@ async function doLoginJoueur() {
 }
 
 async function doLoginOrga() {
-  const pwd = document.getElementById('login-orga-pwd').value;
+  const email = document.getElementById('login-orga-email').value.trim();
+  const pwd   = document.getElementById('login-orga-pwd').value;
+  if (!pwd) { showMsg('err-orga', 'Renseignez le mot de passe.'); return; }
   hideMsg('err-orga');
-  await withBtnLoading('btn-login-orga', 'Vérification…', async () => {
-    const r = await gs('loginOrga', pwd);
-    if (r.ok) {
-      state.role = 'orga';
-      document.getElementById('login-screen').style.display = 'none';
-      document.getElementById('orga-screen').style.display  = '';
-      pushNavState('orga');
-      await loadAllJoueurs();
+
+  const r = email ? await gs('loginOrga', email, pwd) : await gs('loginOrga', pwd);
+  if (r && r.ok) {
+    state.role         = 'orga';
+    state.email        = r.email || 'orga';
+    state.nomJoueur    = r.nomOrga || 'Orga';
+    state.prenomJoueur = r.prenomOrga || '';
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('orga-screen').style.display  = '';
+    pushNavState('orga');
+    await loadAllJoueurs();
+  } else {
+    showMsg('err-orga', 'Identifiants organisateur incorrects.');
+  }
+}
+
+async function loadAllOrgas() {
+  const res = await gs('getAllOrgas');
+  const list = res && res.orgas ? res.orgas : [];
+  const tbody = document.getElementById('orga-list-body');
+  tbody.innerHTML = list.map(o => `
+    <tr>
+      <td>${o.prenomOrga} ${o.nomOrga}</td>
+      <td>${o.email}</td>
+      <td><button class="btn btn-sm btn-danger" onclick="doDeleteOrga('${o.email}')">🗑</button></td>
+    </tr>
+  `).join('') || '<tr><td colspan="3">Aucun compte orga nominatif.</td></tr>';
+}
+
+async function doAddOrga() {
+  const email  = document.getElementById('ao-email').value.trim();
+  const mdp    = document.getElementById('ao-mdp').value.trim();
+  const nom    = document.getElementById('ao-nom').value.trim();
+  const prenom = document.getElementById('ao-prenom').value.trim();
+  if (!email || !mdp) { showMsg('err-ao', 'Email et mot de passe requis.'); return; }
+  hideMsg('err-ao');
+  try {
+    const r = await gs('addOrga', email, mdp, nom, prenom);
+    if (r && r.ok) {
+      showMsg('ok-ao', `✦ Compte orga créé pour ${prenom} ${nom}`, 'success');
+      ['ao-email','ao-mdp','ao-nom','ao-prenom'].forEach(id => document.getElementById(id).value = '');
+      await loadAllOrgas();
     } else {
-      showMsg('err-orga', 'Mot de passe incorrect.');
+      showMsg('err-ao', r && r.msg ? r.msg : 'Erreur.');
     }
-  });
+  } catch (e) { showMsg('err-ao', e.message); }
+}
+
+async function doDeleteOrga(email) {
+  if (!confirm('Supprimer cet accès organisateur ?')) return;
+  await gs('deleteOrga', email);
+  await loadAllOrgas();
+  showToast('✦ Accès orga supprimé');
 }
 
 // ── DASHBOARD ────────────────────────────────────────────────
