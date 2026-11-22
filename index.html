@@ -579,25 +579,6 @@ textarea { min-height: 180px; resize: vertical; line-height: 1.7; }
 .site-btn-fixed:hover {
   background: var(--gold-light);
 }
-  
-.chat-btn-fixed {
-  position: fixed;
-  bottom: 80px;
-  right: 0;
-  background: var(--red-blood);
-  color: var(--parchment);
-  border: 1px solid var(--gold);
-  border-right: none;
-  border-radius: 4px 0 0 4px;
-  padding: 10px 8px;
-  cursor: pointer;
-  font-size: 0.7rem;
-  z-index: 150;
-  writing-mode: vertical-rl;
-  font-family: 'Cinzel', serif;
-  letter-spacing: 2px;
-}
-.chat-btn-fixed:hover { background: #6b0f0f; }
 
 /* ── TABLE ORGA ── */
 .orga-table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
@@ -662,40 +643,68 @@ textarea { min-height: 180px; resize: vertical; line-height: 1.7; }
 .toast.show { opacity: 1; transform: translateY(0); }
 
 /* ── DÉS FLOTTANTS ── */
-#des-btn-float {
+.top-quick-bar {
   position: fixed;
-  right: 0; top: 50%;
-  transform: translateY(-50%);
+  top: 10px;
+  right: 16px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  z-index: 150;
+}
+.site-btn-top, .chat-btn-top, #des-btn-float {
+  padding: 6px 12px;
+  border-radius: 3px;
+  border: 1px solid var(--gold);
+  font-family: 'Cinzel', serif;
+  font-size: 0.72rem;
+  letter-spacing: 1px;
+  cursor: pointer;
+  text-decoration: none;
+  box-shadow: 0 3px 10px var(--shadow);
+  transition: background 0.2s, color 0.2s;
+}
+.site-btn-top {
+  background: var(--gold);
+  color: var(--ink);
+  font-weight: 700;
+}
+.site-btn-top:hover {
+  background: var(--gold-light);
+}
+.chat-btn-top {
+  background: var(--red-blood);
+  color: var(--parchment);
+}
+.chat-btn-top:hover {
+  background: #6b0f0f;
+}
+#des-btn-float {
   background: var(--ink);
   color: var(--parchment);
-  border: 1px solid var(--gold);
-  border-right: none;
-  border-radius: 4px 0 0 4px;
-  padding: 12px 8px;
-  cursor: pointer;
-  z-index: 150;
-  writing-mode: vertical-rl;
-  letter-spacing: 2px;
-  font-family: 'Cinzel', serif;
-  font-size: 0.7rem;
 }
-#des-btn-float:hover { background: var(--gold); }
+#des-btn-float:hover {
+  background: var(--gold);
+  color: var(--ink);
+}
 #des-panel {
   position: fixed;
-  right: -320px; top: 50%;
-  transform: translateY(-50%);
+  right: -320px;
+  top: 52px;
   width: 300px;
   background: var(--parchment);
   border: 2px solid var(--border);
-  box-shadow: 0 0 0 1px var(--gold), -4px 0 20px var(--shadow);
-  border-radius: 4px 0 0 4px;
+  box-shadow: 0 0 0 1px var(--gold), 0 6px 24px var(--shadow);
+  border-radius: 4px;
   padding: 20px;
   z-index: 149;
   transition: right 0.3s ease;
   max-height: 80vh;
   overflow-y: auto;
 }
-#des-panel.open { right: 0; }
+#des-panel.open {
+  right: 16px;
+}
 .des-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 16px; }
 .des-type-btn {
   padding: 8px 4px;
@@ -980,7 +989,12 @@ textarea { min-height: 180px; resize: vertical; line-height: 1.7; }
 </div>
 
 <!-- ══ DÉS FLOTTANTS ══ -->
-<button id="des-btn-float" onclick="toggleDesPanel()">🎲 Dés</button>
+<!-- ══ BARRE RAPIDE EN HAUT ══ -->
+<div class="top-quick-bar">
+  <a class="site-btn-top" id="site-btn-fixed" href="https://www.xn--farie-csa.fr/" target="_blank" rel="noopener noreferrer" title="Visiter le site Faërie">🌐 Site Faërie</a>
+  <button class="chat-btn-top" id="chat-btn-fixed" onclick="openChat()" style="display:none">✉ Message</button>
+  <button id="des-btn-float" onclick="toggleDesPanel()">🎲 Dés</button>
+</div>
 <div id="des-panel">
   <div style="font-family:'Cinzel',serif;font-size:0.85rem;font-weight:700;letter-spacing:2px;margin-bottom:14px;color:var(--ink);">🎲 Lancer les dés</div>
   <div class="des-grid">
@@ -1003,11 +1017,6 @@ textarea { min-height: 180px; resize: vertical; line-height: 1.7; }
     <div style="font-family:'Cinzel',serif;font-size:0.7rem;color:var(--ink-light);letter-spacing:1px;margin-bottom:4px;">HISTORIQUE</div>
   </div>
 </div>
-
-<a class="site-btn-fixed" id="site-btn-fixed" href="https://www.xn--farie-csa.fr/" target="_blank" rel="noopener noreferrer" title="Visiter le site Faërie">🌐 Site Faërie</a>
-  
-<!-- Bouton chat flottant -->
-<button class="chat-btn-fixed" id="chat-btn-fixed" onclick="openChat()" style="display:none">✉ Message</button>
 
 <!-- ══ MODALES ══ -->
 <div class="modal-overlay" id="modal-edit">
