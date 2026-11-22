@@ -1285,6 +1285,7 @@ async function doLoginOrga() {
   await withBtnLoading('btn-login-orga', 'Connexion…', async () => {
     const r = email ? await gs('loginOrga', email, pwd) : await gs('loginOrga', pwd);
     if (r && r.ok) {
+      state.orgaCreds = { email, pwd };
       state.role         = 'orga';
       state.email        = r.email || 'orga';
       state.nomJoueur    = r.nomOrga || 'Orga';
@@ -1872,6 +1873,7 @@ function renderTableJoueurs(list) {
       <td style="font-size:0.8rem;color:var(--ink-light)">${j.dateCreation || '—'}</td>
       <td style="display:flex;gap:6px;flex-wrap:wrap">
         <button class="btn btn-sm" onclick="orgaViewJoueur('${j.email}','${j.nomJoueur}','${j.prenomJoueur}')">Voir persos</button>
+        <button class="btn btn-sm btn-ghost" onclick="orgaResetMdp('${j.email}')">🔑 Reset MDP</button>
       </td>
     </tr>
   `).join('');
@@ -1952,6 +1954,25 @@ async function doAddJoueur() {
       await loadAllJoueurs(true);
     } catch(e) { showMsg('err-aj', 'Erreur : ' + e.message); }
   });
+}
+
+  async function orgaResetMdp(email) {
+  if (!confirm('Réinitialiser le mot de passe de ' + email + ' ?')) return;
+  if (!state.orgaCreds) {
+    showToast('Session orga incomplète : reconnectez-vous.');
+    return;
+  }
+  const code = Math.random().toString(36).slice(-6).toUpperCase();
+  try {
+    const r = await gs('resetMdpJoueur', state.orgaCreds.email, state.orgaCreds.pwd, email, code);
+    if (r && r.ok) {
+      alert('Nouveau mot de passe : ' + code + '\nTransmets-le au joueur.');
+    } else {
+      showToast((r && r.msg) || 'Erreur lors de la réinitialisation.');
+    }
+  } catch (e) {
+    showToast('Erreur : ' + e.message);
+  }
 }
 
 // ── AJOUTER PERSONNAGE (orga) ─────────────────────────────────
