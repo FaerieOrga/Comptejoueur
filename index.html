@@ -161,7 +161,7 @@ input:focus, select:focus, textarea:focus {
 .pwd-toggle:hover {
   color: var(--ink);
 }
-  
+
 textarea { min-height: 180px; resize: vertical; line-height: 1.7; }
 
 /* ── BOUTONS ── */
@@ -221,6 +221,39 @@ textarea { min-height: 180px; resize: vertical; line-height: 1.7; }
   font-size: 0.9rem;
   margin-top: 10px;
   display: none;
+}
+
+.chat-historique {
+  max-height: 240px;
+  overflow-y: auto;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.25);
+  padding: 12px;
+  margin-bottom: 16px;
+  border-radius: 2px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.chat-bulle {
+  padding: 8px 12px;
+  border-radius: 3px;
+  font-size: 0.95rem;
+  border: 1px solid rgba(107,76,30,0.25);
+}
+.chat-bulle-orga {
+  background: rgba(139,26,26,0.08);
+  border-left: 3px solid var(--red-blood);
+}
+.chat-bulle-joueur {
+  background: rgba(154,123,47,0.12);
+  border-left: 3px solid var(--gold);
+}
+.chat-meta {
+  font-family: 'Cinzel', serif;
+  font-size: 0.7rem;
+  color: var(--ink-light);
+  margin-bottom: 3px;
 }
 
 /* ── LOGOUT BAR ── */
@@ -555,7 +588,6 @@ textarea { min-height: 180px; resize: vertical; line-height: 1.7; }
 }
 .chronique-editor-meta { font-size: 0.78rem; color: var(--ink-light); margin-bottom: 12px; }
 
-
 /* ── TABLE ORGA ── */
 .orga-table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
 .orga-table th {
@@ -628,7 +660,7 @@ textarea { min-height: 180px; resize: vertical; line-height: 1.7; }
   align-items: center;
   z-index: 150;
 }
-.site-btn-top, .chat-btn-top, #des-btn-float {
+.site-btn-top, #des-btn-float {
   padding: 6px 12px;
   border-radius: 3px;
   border: 1px solid var(--gold);
@@ -647,13 +679,6 @@ textarea { min-height: 180px; resize: vertical; line-height: 1.7; }
 }
 .site-btn-top:hover {
   background: var(--gold-light);
-}
-.chat-btn-top {
-  background: var(--red-blood);
-  color: var(--parchment);
-}
-.chat-btn-top:hover {
-  background: #6b0f0f;
 }
 #des-btn-float {
   background: var(--ink);
@@ -791,7 +816,7 @@ textarea { min-height: 180px; resize: vertical; line-height: 1.7; }
       <span id="dashboard-label">Mon espace</span>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
         <button class="btn btn-sm" id="btn-dashboard-retour-orga" onclick="retourTableau()" style="display:none">← Tableau orga</button>
-        <button class="btn btn-sm" onclick="openChat()">✉ Message</button>
+        <button class="btn btn-sm" id="btn-dashboard-chat" onclick="openChat()">✉ Messages</button>
         <button class="btn btn-sm" onclick="logout()">Déconnexion</button>
       </div>
     </div>
@@ -820,7 +845,7 @@ textarea { min-height: 180px; resize: vertical; line-height: 1.7; }
       <div style="display:flex;gap:8px;flex-wrap:wrap">
         <button class="btn btn-sm" onclick="retourDashboard()">← Retour</button>
         <button class="btn btn-sm" id="btn-retour-orga" onclick="retourTableau()" style="display:none">← Tableau orga</button>
-        <button class="btn btn-sm" onclick="openChat()">✉ Message</button>
+        <button class="btn btn-sm" id="btn-fiche-chat" onclick="openChat()">✉ Messages</button>
         <button class="btn btn-sm" onclick="logout()">Déconnexion</button>
       </div>
     </div>
@@ -964,12 +989,13 @@ textarea { min-height: 180px; resize: vertical; line-height: 1.7; }
 
 </div>
 
-<!-- ══ DÉS FLOTTANTS ══ -->
 <!-- ══ BARRE RAPIDE EN HAUT ══ -->
 <div class="top-quick-bar">
-   <button id="des-btn-float" onclick="toggleDesPanel()">🎲 Dés</button>
+  <button id="des-btn-float" onclick="toggleDesPanel()">🎲 Dés</button>
   <a class="site-btn-top" id="site-btn-fixed" href="https://www.xn--farie-csa.fr/" target="_blank" rel="noopener noreferrer" title="Visiter le site Faërie">🌐 Site Faërie</a>
 </div>
+
+<!-- ══ DÉS FLOTTANTS ══ -->
 <div id="des-panel">
   <div style="font-family:'Cinzel',serif;font-size:0.85rem;font-weight:700;letter-spacing:2px;margin-bottom:14px;color:var(--ink);">🎲 Lancer les dés</div>
   <div class="des-grid">
@@ -1130,14 +1156,35 @@ textarea { min-height: 180px; resize: vertical; line-height: 1.7; }
 <div class="modal-overlay" id="modal-chat">
   <div class="modal-box">
     <button class="modal-close" onclick="closeModal('modal-chat')">✕</button>
-    <div class="modal-title">✉ Envoyer un message à l'orga</div>
-    <div style="font-family:'IM Fell English',serif;font-style:italic;color:var(--ink-light);margin-bottom:16px;font-size:0.95rem;">
-      Votre message sera transmis par email à l'équipe organisatrice.
+    <div class="modal-title">✉ Messages & Contact Orga</div>
+    <div style="font-family:'IM Fell English',serif;font-style:italic;color:var(--ink-light);margin-bottom:12px;font-size:0.95rem;">
+      Les messages reçus de l'orga sont regroupés dans le récapitulatif quotidien de nuit. Vos envois partent directement à l'orga.
     </div>
-    <div class="form-group"><label>Votre message</label><textarea id="chat-message" style="min-height:160px" placeholder="Écrivez votre message ici…"></textarea></div>
+    <div id="chat-historique" class="chat-historique">
+      <div style="font-style:italic;color:var(--ink-light);font-size:0.9rem;">Chargement des messages…</div>
+    </div>
+    <div class="form-group"><label>Écrire un message à l'orga</label><textarea id="chat-message" style="min-height:130px" placeholder="Écrivez votre message ici…"></textarea></div>
     <button class="btn btn-full" id="btn-send-chat" onclick="doSendMessage()">Envoyer le message</button>
     <div class="msg-error" id="err-chat"></div>
     <div class="msg-success" id="ok-chat"></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-chat-orga">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('modal-chat-orga')">✕</button>
+    <div class="modal-title" id="modal-chat-orga-title">✉ Envoyer un message au joueur</div>
+    <div style="font-family:'IM Fell English',serif;font-style:italic;color:var(--ink-light);margin-bottom:14px;font-size:0.95rem;">
+      Le joueur recevra ce message dans le récapitulatif quotidien de nuit.
+    </div>
+    <div id="chat-orga-historique" class="chat-historique"></div>
+    <div class="form-group">
+      <label>Votre message</label>
+      <textarea id="chat-orga-texte" style="min-height:140px" placeholder="Message à destination du joueur…"></textarea>
+    </div>
+    <button class="btn btn-orga btn-full" id="btn-send-chat-orga" onclick="doSendMessageOrga()">Envoyer au joueur</button>
+    <div class="msg-error" id="err-chat-orga"></div>
+    <div class="msg-success" id="ok-chat-orga"></div>
   </div>
 </div>
 
@@ -1198,7 +1245,7 @@ textarea { min-height: 180px; resize: vertical; line-height: 1.7; }
     <div class="msg-success" id="ok-cm"></div>
   </div>
 </div>
-  
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -1217,6 +1264,7 @@ const state = {
   currentChronique: null,
   editLienIndex:    -1,
   allJoueurs:       [],
+  cibleMessageOrga: null,
   cache: {
     persosByEmail: {},
     fiches: {}
@@ -1287,7 +1335,6 @@ function logout() {
   document.getElementById('dashboard-screen').style.display = 'none';
   document.getElementById('fiche-screen').style.display     = 'none';
   document.getElementById('orga-screen').style.display      = 'none';
-  document.getElementById('chat-btn-fixed').style.display   = 'none';
 }
 
 // ── LIENS UTILES & DRIVE ────────────────────────────────────
@@ -1339,8 +1386,7 @@ async function doLoginJoueur() {
       state.email        = r.email;
       state.nomJoueur    = r.nomJoueur;
       state.prenomJoueur = r.prenomJoueur;
-      document.getElementById('login-screen').style.display   = 'none';
-      document.getElementById('chat-btn-fixed').style.display = '';
+      document.getElementById('login-screen').style.display = 'none';
       pushNavState('dashboard');
       await loadDashboard();
     } else {
@@ -1349,7 +1395,7 @@ async function doLoginJoueur() {
   });
 }
 
-  function togglePwdVisibility(inputId, btn) {
+function togglePwdVisibility(inputId, btn) {
   const input = document.getElementById(inputId);
   if (!input) return;
   const isPwd = input.type === 'password';
@@ -1477,6 +1523,7 @@ async function loadDashboard() {
   document.getElementById('fiche-screen').style.display              = 'none';
   document.getElementById('btn-dashboard-retour-orga').style.display = 'none';
   document.getElementById('btn-dashboard-add-perso').style.display   = 'none';
+  document.getElementById('btn-dashboard-chat').style.display        = '';
   document.getElementById('btn-joueur-add-perso').style.display      = '';
   document.getElementById('btn-joueur-change-mdp').style.display   = '';
   document.getElementById('dashboard-label').textContent             = `${state.prenomJoueur} ${state.nomJoueur}`;
@@ -1576,6 +1623,7 @@ function appliquerFicheSurEcran(data, isOrgaView) {
   document.getElementById('dashboard-screen').style.display = 'none';
   document.getElementById('fiche-screen').style.display     = '';
   document.getElementById('btn-retour-orga').style.display  = isOrgaView ? '' : 'none';
+  document.getElementById('btn-fiche-chat').style.display   = isOrgaView ? 'none' : '';
 
   renderFiche(state.perso);
   showOnglet('bg', document.querySelector('.onglet-btn'));
@@ -1680,8 +1728,9 @@ function updateOngletChrNotif() {
 function openEditFiche() {
   const p      = state.perso;
   const isOrga = (state.role === 'orga' || state.role === 'orga-view');
-  document.getElementById('modal-title-edit').textContent = isOrga ? '✏ Modifier la fiche (Orga)' : '✏ Modifier mon histoire';
+  document.getElementById('modal-title-edit').textContent = isOrga ? '✏ Modifier la fiche (Orga)' : '✏ Modifier ma fiche';
 
+  document.getElementById('e-email').value         = state.email || '';
   document.getElementById('e-nom-perso').value     = p.nomPersonnage || '';
   document.getElementById('e-histoire').value      = p.histoire      || '';
   document.getElementById('e-nom-joueur').value    = state.nomJoueur;
@@ -1696,8 +1745,11 @@ function openEditFiche() {
     document.getElementById(`lu-url-${i}`).value   = liens[i-1] ? liens[i-1].url   : '';
   }
 
-  ['row-nom-joueur','row-prenom','row-statut','row-sf','row-photo','row-liens-utiles'].forEach(id => {
+  ['row-nom-joueur','row-prenom','row-statut','row-sf','row-liens-utiles'].forEach(id => {
     document.getElementById(id).style.display = isOrga ? '' : 'none';
+  });
+  ['row-email','row-photo'].forEach(id => {
+    document.getElementById(id).style.display = '';
   });
 
   hideMsg('err-edit'); hideMsg('ok-edit');
@@ -1724,6 +1776,7 @@ async function saveFicheJoueur() {
       const r = await gs('savePersonnage', state.email, state.perso.idPerso, data, isOrga);
       if (r.ok) {
         if (isJoueur && data.email !== state.email) {
+          delete state.cache.persosByEmail[state.email];
           state.email = data.email;
           document.getElementById('fi-email').textContent = state.email;
         }
@@ -1969,11 +2022,38 @@ async function deleteChronique() {
   });
 }
 
-// ── CHAT ─────────────────────────────────────────────────────
-function openChat() {
+// ── CHAT JOUEUR & ORGA ───────────────────────────────────────
+function renderBullesMessages(containerId, list) {
+  const box = document.getElementById(containerId);
+  if (!box) return;
+  if (!list || !list.length) {
+    box.innerHTML = '<div style="font-style:italic;color:var(--ink-light);font-size:0.9rem;">Aucun message dans cette discussion pour l\'instant.</div>';
+    return;
+  }
+  box.innerHTML = list.map(m => {
+    const isOrgaMsg = m.expediteur === 'orga';
+    const auteurLabel = isOrgaMsg ? `⚔ ${m.nomExpediteur || 'Orga'}` : `🧙 ${m.nomExpediteur || 'Joueur'}`;
+    return `
+      <div class="chat-bulle ${isOrgaMsg ? 'chat-bulle-orga' : 'chat-bulle-joueur'}">
+        <div class="chat-meta">${auteurLabel}${m.dateEnvoi ? ' · ' + m.dateEnvoi : ''}</div>
+        <div style="white-space:pre-wrap">${m.texte}</div>
+      </div>
+    `;
+  }).join('');
+  box.scrollTop = box.scrollHeight;
+}
+
+async function openChat() {
   document.getElementById('chat-message').value = '';
   hideMsg('err-chat'); hideMsg('ok-chat');
+  document.getElementById('chat-historique').innerHTML = '<div style="font-style:italic;color:var(--ink-light);font-size:0.9rem;">Chargement des messages…</div>';
   openModal('modal-chat');
+  try {
+    const res = await gs('getMessagesJoueur', state.email);
+    renderBullesMessages('chat-historique', res && res.messages ? res.messages : []);
+  } catch (e) {
+    document.getElementById('chat-historique').innerHTML = '<div style="color:var(--red-blood);font-size:0.9rem;">Impossible de charger les messages.</div>';
+  }
 }
 
 async function doSendMessage() {
@@ -1984,7 +2064,50 @@ async function doSendMessage() {
       await gs('sendMessage', state.email, `${state.prenomJoueur} ${state.nomJoueur}`, msg);
       showMsg('ok-chat', '✦ Message envoyé à l\'orga !', 'success');
       document.getElementById('chat-message').value = '';
+      const res = await gs('getMessagesJoueur', state.email);
+      renderBullesMessages('chat-historique', res && res.messages ? res.messages : []);
     } catch(e) { showMsg('err-chat', 'Erreur : ' + e.message); }
+  });
+}
+
+async function openChatOrga(emailJoueur, nomComplet) {
+  state.cibleMessageOrga = { email: emailJoueur, nom: nomComplet };
+  document.getElementById('modal-chat-orga-title').textContent = `✉ Message à ${nomComplet}`;
+  document.getElementById('chat-orga-texte').value = '';
+  hideMsg('err-chat-orga');
+  hideMsg('ok-chat-orga');
+  document.getElementById('chat-orga-historique').innerHTML = '<div style="font-style:italic;color:var(--ink-light);font-size:0.9rem;">Chargement…</div>';
+  openModal('modal-chat-orga');
+  try {
+    const res = await gs('getMessagesJoueur', emailJoueur);
+    renderBullesMessages('chat-orga-historique', res && res.messages ? res.messages : []);
+  } catch (e) {
+    document.getElementById('chat-orga-historique').innerHTML = '<div style="color:var(--red-blood);font-size:0.9rem;">Erreur de chargement.</div>';
+  }
+}
+
+async function doSendMessageOrga() {
+  if (!state.cibleMessageOrga || !state.cibleMessageOrga.email) return;
+  const texte = document.getElementById('chat-orga-texte').value.trim();
+  if (!texte) {
+    showMsg('err-chat-orga', 'Écrivez un message avant d\'envoyer.');
+    return;
+  }
+  const nomOrga = `${state.prenomJoueur || ''} ${state.nomJoueur || 'Orga'}`.trim();
+  await withBtnLoading('btn-send-chat-orga', 'Envoi…', async () => {
+    try {
+      const r = await gs('sendMessageOrga', state.cibleMessageOrga.email, nomOrga, texte);
+      if (r && r.ok) {
+        showMsg('ok-chat-orga', '✦ Message enregistré (sera inclus dans le récapitulatif de nuit).', 'success');
+        document.getElementById('chat-orga-texte').value = '';
+        const res = await gs('getMessagesJoueur', state.cibleMessageOrga.email);
+        renderBullesMessages('chat-orga-historique', res && res.messages ? res.messages : []);
+      } else {
+        showMsg('err-chat-orga', (r && r.msg) || 'Erreur lors de l\'envoi.');
+      }
+    } catch (e) {
+      showMsg('err-chat-orga', 'Erreur : ' + e.message);
+    }
   });
 }
 
@@ -2007,18 +2130,22 @@ function renderTableJoueurs(list) {
     tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px;font-style:italic;color:var(--ink-light);">Aucun joueur.</td></tr>';
     return;
   }
-  tbody.innerHTML = list.map(j => `
-    <tr>
-      <td>${j.prenomJoueur} ${j.nomJoueur}</td>
-      <td>${j.email}</td>
-      <td>—</td>
-      <td style="font-size:0.8rem;color:var(--ink-light)">${j.dateCreation || '—'}</td>
-      <td style="display:flex;gap:6px;flex-wrap:wrap">
-        <button class="btn btn-sm" onclick="orgaViewJoueur('${j.email}','${j.nomJoueur}','${j.prenomJoueur}')">Voir persos</button>
-        <button class="btn btn-sm btn-ghost" onclick="orgaResetMdp('${j.email}')">🔑 Reset MDP</button>
-      </td>
-    </tr>
-  `).join('');
+  tbody.innerHTML = list.map(j => {
+    const nomComplet = `${j.prenomJoueur} ${j.nomJoueur}`.trim();
+    return `
+      <tr>
+        <td>${nomComplet}</td>
+        <td>${j.email}</td>
+        <td>—</td>
+        <td style="font-size:0.8rem;color:var(--ink-light)">${j.dateCreation || '—'}</td>
+        <td style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn btn-sm" onclick="orgaViewJoueur('${j.email}','${j.nomJoueur}','${j.prenomJoueur}')">Voir persos</button>
+          <button class="btn btn-sm btn-orga" onclick="openChatOrga('${j.email}','${nomComplet.replace(/'/g, "\\'")}')">✉ Message</button>
+          <button class="btn btn-sm btn-ghost" onclick="orgaResetMdp('${j.email}')">🔑 Reset MDP</button>
+        </td>
+      </tr>
+    `;
+  }).join('');
 }
 
 function filterJoueurs(q) {
@@ -2039,6 +2166,7 @@ async function orgaViewJoueur(email, nom, prenom) {
   document.getElementById('dashboard-screen').style.display          = '';
   document.getElementById('btn-dashboard-retour-orga').style.display = '';
   document.getElementById('btn-dashboard-add-perso').style.display   = '';
+  document.getElementById('btn-dashboard-chat').style.display        = 'none';
   document.getElementById('btn-joueur-add-perso').style.display      = 'none';
   document.getElementById('btn-joueur-change-mdp').style.display   = 'none';
   document.getElementById('dashboard-label').textContent             = `Orga — ${prenom} ${nom}`;
@@ -2099,7 +2227,7 @@ async function doAddJoueur() {
   });
 }
 
-  async function orgaResetMdp(email) {
+async function orgaResetMdp(email) {
   if (!confirm('Réinitialiser le mot de passe de ' + email + ' ?')) return;
   if (!state.orgaCreds) {
     showToast('Session orga incomplète : reconnectez-vous.');
