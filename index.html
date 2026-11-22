@@ -138,6 +138,30 @@ input:focus, select:focus, textarea:focus {
   border-color: var(--gold);
   box-shadow: 0 0 0 2px rgba(154,123,47,0.2);
 }
+
+.pwd-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.pwd-wrap input {
+  padding-right: 42px;
+}
+.pwd-toggle {
+  position: absolute;
+  right: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--ink-light);
+  font-size: 1rem;
+  padding: 4px;
+  line-height: 1;
+}
+.pwd-toggle:hover {
+  color: var(--ink);
+}
+  
 textarea { min-height: 180px; resize: vertical; line-height: 1.7; }
 
 /* ── BOUTONS ── */
@@ -726,7 +750,10 @@ textarea { min-height: 180px; resize: vertical; line-height: 1.7; }
         </div>
         <div class="form-group">
           <label>Mot de passe</label>
-          <input type="password" id="login-mdp" placeholder="••••••••" onkeydown="if(event.key==='Enter') doLoginJoueur()">
+          <div class="pwd-wrap">
+            <input type="password" id="login-mdp" placeholder="••••••••" onkeydown="if(event.key==='Enter') doLoginJoueur()">
+            <button type="button" class="pwd-toggle" onclick="togglePwdVisibility('login-mdp', this)" title="Afficher / masquer">👁</button>
+          </div>
         </div>
         <button class="btn btn-full" id="btn-login-joueur" onclick="doLoginJoueur()">Accéder à mon espace</button>
         <div class="msg-error" id="err-joueur">Email ou mot de passe incorrect.</div>
@@ -738,7 +765,10 @@ textarea { min-height: 180px; resize: vertical; line-height: 1.7; }
         </div>
         <div class="form-group">
           <label>Mot de passe</label>
-          <input type="password" id="login-orga-pwd" placeholder="••••••••" onkeydown="if(event.key==='Enter') doLoginOrga()">
+          <div class="pwd-wrap">
+            <input type="password" id="login-orga-pwd" placeholder="••••••••" onkeydown="if(event.key==='Enter') doLoginOrga()">
+            <button type="button" class="pwd-toggle" onclick="togglePwdVisibility('login-orga-pwd', this)" title="Afficher / masquer">👁</button>
+          </div>
         </div>
         <button class="btn btn-orga btn-full" id="btn-login-orga" onclick="doLoginOrga()">Accès organisateur</button>
         <div class="msg-error" id="err-orga">Identifiants organisateur incorrects.</div>
@@ -1272,6 +1302,65 @@ async function doLoginJoueur() {
       await loadDashboard();
     } else {
       showMsg('err-joueur', 'Email ou mot de passe incorrect.');
+    }
+  });
+}
+
+  function togglePwdVisibility(inputId, btn) {
+  const input = document.getElementById(inputId);
+  if (!input) return;
+  const isPwd = input.type === 'password';
+  input.type = isPwd ? 'text' : 'password';
+  btn.textContent = isPwd ? '🙈' : '👁';
+}
+
+function openChangeMdp() {
+  ['cm-ancien', 'cm-nouveau', 'cm-confirm'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.value = '';
+      el.type = 'password';
+    }
+  });
+  document.querySelectorAll('#modal-change-mdp .pwd-toggle').forEach(b => b.textContent = '👁');
+  hideMsg('err-cm');
+  hideMsg('ok-cm');
+  openModal('modal-change-mdp');
+}
+
+async function doChangeMdp() {
+  const ancien  = document.getElementById('cm-ancien').value;
+  const nouveau = document.getElementById('cm-nouveau').value;
+  const confirm = document.getElementById('cm-confirm').value;
+
+  hideMsg('err-cm');
+  hideMsg('ok-cm');
+
+  if (!ancien || !nouveau) {
+    showMsg('err-cm', 'Veuillez renseigner votre mot de passe actuel et le nouveau.');
+    return;
+  }
+  if (nouveau.length < 6) {
+    showMsg('err-cm', 'Le nouveau mot de passe doit contenir au moins 6 caractères.');
+    return;
+  }
+  if (nouveau !== confirm) {
+    showMsg('err-cm', 'La confirmation ne correspond pas au nouveau mot de passe.');
+    return;
+  }
+
+  await withBtnLoading('btn-save-mdp', 'Mise à jour…', async () => {
+    try {
+      const r = await gs('changeMdpJoueur', state.email, ancien, nouveau);
+      if (r && r.ok) {
+        showMsg('ok-cm', '✦ Votre mot de passe a bien été mis à jour.', 'success');
+        ['cm-ancien', 'cm-nouveau', 'cm-confirm'].forEach(id => document.getElementById(id).value = '');
+        showToast('✦ Mot de passe mis à jour');
+      } else {
+        showMsg('err-cm', (r && r.msg) || 'Impossible de modifier le mot de passe.');
+      }
+    } catch (e) {
+      showMsg('err-cm', 'Erreur : ' + e.message);
     }
   });
 }
