@@ -1010,6 +1010,7 @@ textarea { min-height: 180px; resize: vertical; line-height: 1.7; }
         </div>
       </div>
       <div>
+        <div id="row-email" class="form-group"><label>Adresse e-mail</label><input type="email" id="e-email"></div>
         <div id="row-nom-joueur" class="form-group"><label>Nom joueur·euse</label><input type="text" id="e-nom-joueur"></div>
         <div id="row-prenom" class="form-group"><label>Prénom</label><input type="text" id="e-prenom-joueur"></div>
         <div id="row-statut" class="form-group">
@@ -1704,19 +1705,28 @@ function openEditFiche() {
 }
 
 async function saveFicheJoueur() {
-  const isOrga = (state.role === 'orga' || state.role === 'orga-view');
+  const isOrga     = (state.role === 'orga' || state.role === 'orga-view');
+  const isJoueur   = (state.role === 'joueur');
+  const inputEmail = document.getElementById('e-email').value.trim();
+
   const data = {
+    email:         isJoueur ? (inputEmail || state.email) : state.email,
     nomPersonnage: document.getElementById('e-nom-perso').value.trim(),
     histoire:      document.getElementById('e-histoire').value,
     statutPerso:   isOrga ? document.getElementById('e-statut').value : state.perso.statutPerso,
     savoirFaire:   isOrga ? document.getElementById('e-sf').value.trim() : state.perso.savoirFaire,
-    photoUrl:      isOrga ? document.getElementById('e-photo').value.trim() : state.perso.photoUrl,
+    photoUrl:      document.getElementById('e-photo').value.trim(),
     liensUtiles:   isOrga ? serializeLiensUtiles() : state.perso.liensUtiles || ''
   };
+
   await withBtnLoading('btn-save-fiche', 'Sauvegarde…', async () => {
     try {
       const r = await gs('savePersonnage', state.email, state.perso.idPerso, data, isOrga);
       if (r.ok) {
+        if (isJoueur && data.email !== state.email) {
+          state.email = data.email;
+          document.getElementById('fi-email').textContent = state.email;
+        }
         state.perso = { ...state.perso, ...data };
         if (state.cache.fiches[state.perso.idPerso]) {
           state.cache.fiches[state.perso.idPerso].perso = state.perso;
