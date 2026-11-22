@@ -556,6 +556,30 @@ textarea { min-height: 180px; resize: vertical; line-height: 1.7; }
 .chronique-editor-meta { font-size: 0.78rem; color: var(--ink-light); margin-bottom: 12px; }
 
 /* ── CHAT / MESSAGE ── */
+
+  .site-btn-fixed {
+  position: fixed;
+  bottom: 165px;
+  right: 0;
+  background: var(--gold);
+  color: var(--ink);
+  border: 1px solid var(--border);
+  border-right: none;
+  border-radius: 4px 0 0 4px;
+  padding: 10px 8px;
+  cursor: pointer;
+  font-size: 0.7rem;
+  z-index: 150;
+  writing-mode: vertical-rl;
+  font-family: 'Cinzel', serif;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-decoration: none;
+}
+.site-btn-fixed:hover {
+  background: var(--gold-light);
+}
+  
 .chat-btn-fixed {
   position: fixed;
   bottom: 80px;
@@ -980,6 +1004,8 @@ textarea { min-height: 180px; resize: vertical; line-height: 1.7; }
   </div>
 </div>
 
+<a class="site-btn-fixed" id="site-btn-fixed" href="https://www.xn--farie-csa.fr/" target="_blank" rel="noopener noreferrer" title="Visiter le site Faërie">🌐 Site Faërie</a>
+  
 <!-- Bouton chat flottant -->
 <button class="chat-btn-fixed" id="chat-btn-fixed" onclick="openChat()" style="display:none">✉ Message</button>
 
